@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="or">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>କୃଷିସେବା — KrishiSeva v2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Odia:wght@400;600;700&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g50:#EAF3DE;--g100:#C5DFA0;--g200:#97C459;--g400:#549122;--g500:#3B6D11;--g600:#2E560D;--g700:#224009;--g800:#173404;
+  --a50:#FEF4E3;--a100:#FAD99A;--a200:#F0B340;--a400:#C8841A;--a600:#8A5610;
+  --t50:#E0F5EE;--t100:#9FE1CB;--t400:#1D9E75;--t600:#0F6E56;
+  --r50:#FEF0F0;--r400:#E04444;--r600:#B52B2B;
+  --gr50:#F5F4F0;--gr100:#E0DED7;--gr200:#B8B6AE;--gr400:#888780;--gr600:#58574F;--gr800:#3A3A35;
+  --sb:248px;--tb:58px;--rad:10px;
+  --font:'DM Sans',sans-serif;--font-od:'Noto Sans Odia',sans-serif;--font-s:'Playfair Display',serif;
+}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--font);background:#EFF1EB;color:#2a2a25;min-height:100vh;-webkit-font-smoothing:antialiased}
+.od{font-family:var(--font-od)!important}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:#f0f0ea}::-webkit-scrollbar-thumb{background:var(--g200);border-radius:3px}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:linear-gradient(140deg,#0e2205,#1e4a0a 50%,#2d6b18);display:flex;align-items:center;justify-content:center;z-index:1000}
+.lbox{background:#fff;border-radius:18px;padding:44px 40px;width:420px;box-shadow:0 24px 64px rgba(0,0,0,.22)}
+.lbrand{text-align:center;margin-bottom:28px}
+.lbrand .icon{font-size:48px;display:block;margin-bottom:10px}
+.lbrand h1{font-family:var(--font-s);font-size:28px;color:var(--g800);font-weight:700}
+.lbrand .tag{font-family:var(--font-od);color:var(--gr400);font-size:13px;margin-top:5px}
+.ltabs{display:flex;background:var(--g50);padding:4px;border-radius:10px;margin-bottom:22px;gap:4px}
+.ltab{flex:1;padding:9px;border:none;background:transparent;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--g500);font-family:var(--font);transition:all .15s}
+.ltab.active{background:#fff;color:var(--g800);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--gr600);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.fc{width:100%;padding:10px 14px;border:1.5px solid var(--gr100);border-radius:9px;font-family:var(--font);font-size:14px;color:#222;outline:none;transition:border-color .15s;background:#fff}
+.fc:focus{border-color:var(--g400)}
+select.fc{cursor:pointer}
+textarea.fc{resize:vertical;min-height:80px}
+.btn-login{width:100%;padding:12px;background:var(--g500);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;transition:background .15s}
+.btn-login:hover{background:var(--g800)}
+.lnote{text-align:center;margin-top:14px;font-size:11px;color:var(--gr400)}
+.ltoggle{position:fixed;top:16px;right:16px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:7px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-family:var(--font)}
+
+/* SHELL */
+#app{display:none;min-height:100vh}
+.shell{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sb{width:var(--sb);background:var(--g800);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;overflow-y:auto;z-index:200}
+.sb-brand{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.sb-brand-icon{font-size:26px}
+.sb-brand h1{font-family:var(--font-s);color:#fff;font-size:16px;font-weight:700;line-height:1.1}
+.sb-brand p{color:var(--g100);font-size:10px;margin-top:2px;font-family:var(--font-od)}
+.sb-user{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.sb-av{width:35px;height:35px;border-radius:50%;background:var(--g400);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{color:#fff;font-size:13px;font-weight:600}
+.sb-urole{color:var(--g100);font-size:11px}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto}
+.sb-lbl{padding:8px 16px 4px;color:var(--g200);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 16px;color:var(--g100);cursor:pointer;font-size:13px;position:relative;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:var(--font)}
+.ni:hover{background:rgba(255,255,255,.07);color:#fff}
+.ni.act{background:var(--g500);color:#fff}
+.ni.act::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;background:var(--g100);border-radius:0 2px 2px 0}
+.ni-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.sb-sub .ni{font-size:12px;padding:7px 16px 7px 44px}
+.sb-footer{padding:8px 0;border-top:1px solid rgba(255,255,255,.1)}
+.logout{color:#ffb3b3!important}
+.logout:hover{background:rgba(255,60,60,.1)!important}
+
+/* MAIN */
+.main{margin-left:var(--sb);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--tb);background:#fff;border-bottom:1px solid #e5e7df;padding:0 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.tb-title{font-family:var(--font-s);font-size:16px;font-weight:700;color:var(--g800)}
+.tb-sub{font-size:11px;color:var(--gr400);margin-top:1px}
+.tb-right{display:flex;align-items:center;gap:9px}
+.tbb{border:1px solid var(--gr100);background:#fff;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:500;color:var(--gr800);font-family:var(--font);transition:all .15s;display:flex;align-items:center;gap:5px}
+.tbb:hover{background:var(--g50);border-color:var(--g200)}
+.page{padding:22px;flex:1}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--rad);border:1px solid #e3e5dc;box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden;margin-bottom:14px}
+.ch{padding:13px 18px;border-bottom:1px solid #f0f0ea;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ch h3{font-size:14px;font-weight:700;color:var(--g800);display:flex;align-items:center;gap:7px}
+.cb{padding:18px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g13{display:grid;grid-template-columns:1fr 340px;gap:14px}
+@media(max-width:900px){.g2,.g13{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.g3,.g4,.g2{grid-template-columns:1fr}}
+
+/* STAT */
+.sc{background:#fff;border-radius:var(--rad);border:1px solid #e3e5dc;padding:14px 16px}
+.sc-lbl{font-size:10px;color:var(--gr400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.sc-val{font-size:24px;font-weight:700;color:var(--g800);line-height:1}
+.sc-sub{font-size:11px;color:var(--gr400);margin-top:3px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bg{background:var(--g50);color:var(--g700)}
+.ba{background:var(--a50);color:var(--a600)}
+.bt{background:var(--t50);color:var(--t600)}
+.br{background:var(--r50);color:var(--r600)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap}
+.bp{background:var(--g500);color:#fff}.bp:hover{background:var(--g800)}
+.bs{background:var(--g50);color:var(--g700);border:1px solid var(--g100)}.bs:hover{background:var(--g100)}
+.ba2{background:var(--a50);color:var(--a600);border:1px solid var(--a100)}.ba2:hover{background:var(--a200)}
+.bt2{background:var(--t50);color:var(--t600);border:1px solid var(--t100)}.bt2:hover{background:var(--t100)}
+.br2{background:var(--r50);color:var(--r600);border:1px solid #f5c6c6}.br2:hover{background:var(--r400);color:#fff}
+.bsm{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.w100{width:100%;justify-content:center}
+.prtbtn{border:1px solid var(--g100);background:#fff;padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;color:var(--g600);font-family:var(--font);font-weight:500}
+.prtbtn:hover{background:var(--g50)}
+
+/* PAGE HEADER */
+.ph{margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
+.ph h2{font-family:var(--font-s);font-size:21px;font-weight:700;color:var(--g800)}
+.ph p{color:var(--gr400);font-size:13px;margin-top:3px}
+.ph-acts{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ALERTS */
+.alert{padding:10px 14px;border-radius:9px;font-size:13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:9px;line-height:1.5}
+.as{background:var(--t50);color:var(--t600);border:1px solid var(--t100)}
+.ai{background:#EDF2FF;color:#1a5fa8;border:1px solid #b9d0f7}
+.aw{background:var(--a50);color:var(--a600);border:1px solid var(--a100)}
+.ae{background:var(--r50);color:var(--r600);border:1px solid #f5c6c6}
+
+/* SUBTABS */
+.stabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+.stab{padding:7px 14px;border-radius:20px;border:1px solid var(--gr100);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--gr600);font-family:var(--font);transition:all .15s}
+.stab:hover:not(.act){background:var(--g50);border-color:var(--g200);color:var(--g700)}
+.stab.act{background:var(--g500);color:#fff;border-color:var(--g500)}
+
+/* TIMELINE */
+.tl{position:relative;padding-left:22px}
+.tl::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1.5px;background:var(--g100)}
+.tli{position:relative;margin-bottom:18px}
+.tli::before{content:'';position:absolute;left:-20px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--g400);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--g400)}
+.tl-wk{font-size:10px;color:var(--g400);font-weight:700;text-transform:uppercase;margin-bottom:2px;letter-spacing:.06em}
+.tl-task{font-size:13px;font-weight:700;color:var(--g800)}
+.tl-det{font-size:12px;color:var(--gr600);margin-top:2px;line-height:1.5}
+
+/* CALENDAR */
+.cal-strip{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+.cal-day{min-width:50px;border-radius:9px;padding:8px 6px;text-align:center;cursor:pointer;border:1.5px solid #eee;background:#fff;transition:all .15s;flex-shrink:0}
+.cal-day:hover{border-color:var(--g300)}
+.cal-day.today{border-color:var(--g400);background:var(--g50)}
+.cal-day.has-ev{background:var(--g500);border-color:var(--g500)}
+.cal-day.has-ev .cdn,.cal-day.has-ev .cdw{color:#fff}
+.cal-day.sel{border-color:var(--a400);background:var(--a50)}
+.cdw{font-size:9px;color:var(--gr400);text-transform:uppercase;letter-spacing:.05em}
+.cdn{font-size:17px;font-weight:700;color:var(--g800);margin-top:1px;line-height:1}
+
+/* DOSE BOX */
+.dose-box{background:var(--g50);border-radius:9px;padding:12px;border:1px solid var(--g100)}
+.dose-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.6)}
+.dose-row:last-child{border-bottom:none}
+.dn{font-size:13px;color:var(--g800);font-weight:600}
+.dv{text-align:right}
+.dv1{font-weight:700;color:var(--g700);font-size:13px}
+.dv2{font-size:11px;color:var(--gr400)}
+
+/* MAP PH */
+.map-ph{background:linear-gradient(135deg,var(--g50),var(--t50));border-radius:10px;height:200px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--g200);flex-direction:column;gap:8px;margin-bottom:16px;position:relative;overflow:hidden}
+.map-ph::before{content:'🗺️';position:absolute;opacity:.05;font-size:160px;top:-20px;right:-20px;pointer-events:none}
+.map-ph h4{font-size:14px;font-weight:700;color:var(--g600)}
+.map-ph p{font-size:12px;color:var(--gr600)}
+.plot-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.8);color:var(--g700);font-size:11px;font-weight:600;border:1px solid var(--g100);margin:2px}
+
+/* PRODUCTS */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.pgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.pgrid{grid-template-columns:1fr}}
+.pc{background:#fff;border-radius:var(--rad);border:1px solid #e3e5dc;overflow:hidden;transition:all .2s}
+.pc:hover{box-shadow:0 4px 14px rgba(0,0,0,.09);transform:translateY(-2px)}
+.pc-img{height:110px;display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,var(--g50),var(--t50))}
+.pc-info{padding:12px}
+.pc-name{font-size:13px;font-weight:700;color:#333;margin-bottom:3px}
+.pc-price{font-size:14px;font-weight:700;color:var(--g600);margin-bottom:2px}
+.pc-del{font-size:11px;color:var(--gr400)}
+.ac-btn{width:100%;margin-top:8px;padding:7px;background:var(--g500);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.ac-btn:hover{background:var(--g800)}
+.cart-badge{background:var(--a200);color:var(--a600);border-radius:20px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:4px}
+
+/* PHOTOS */
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:700px){.photo-grid{grid-template-columns:repeat(2,1fr)}}
+.pthumb{border-radius:8px;overflow:hidden;border:1px solid #e3e5dc;position:relative;aspect-ratio:1;background:var(--g50)}
+.pthumb img{width:100%;height:100%;object-fit:cover}
+.pthumb .ptag{position:absolute;bottom:5px;left:5px;right:5px;background:rgba(23,52,4,.75);color:#fff;font-size:10px;padding:3px 7px;border-radius:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.upload-zone{border:2px dashed var(--g200);border-radius:10px;padding:28px;text-align:center;background:var(--g50);cursor:pointer;transition:all .2s}
+.upload-zone:hover{border-color:var(--g400);background:var(--g100)}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px}
+.overlay.hidden{display:none}
+.modal{background:#fff;border-radius:16px;padding:28px;width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.modal.wide{width:720px}
+.modal.narrow{width:420px}
+.mhdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.mhdr h2{font-family:var(--font-s);font-size:18px;color:var(--g800);font-weight:700}
+.mhdr p{font-size:12px;color:var(--gr400);margin-top:3px}
+.mclose{border:none;background:none;font-size:22px;cursor:pointer;color:var(--gr400);padding:2px;line-height:1}
+.mclose:hover{color:var(--r600)}
+
+/* VOICE */
+.vfab{position:fixed;bottom:22px;right:22px;background:var(--g800);color:#fff;border:none;border-radius:28px;padding:11px 18px;display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font);box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:400;transition:all .2s}
+.vfab:hover{background:var(--g700)}
+.vfab.speaking{background:var(--g400);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(84,145,34,.5)}50%{box-shadow:0 0 0 12px rgba(84,145,34,0)}}
+.vcap{position:fixed;bottom:76px;right:22px;background:rgba(23,52,4,.92);color:#fff;border-radius:12px;padding:10px 16px;max-width:320px;font-size:13px;z-index:399;line-height:1.5;display:none}
+.vcap.show{display:block}
+
+/* AI */
+.ai-result{background:#fff;border-radius:9px;padding:14px;border:1px solid #d1dafe;font-size:13px;line-height:1.6;color:#1a1a2e;min-height:60px;margin-top:12px;white-space:pre-wrap}
+
+/* COSTING */
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid #f5f5f0}
+.cost-row:last-child{border-bottom:none}
+.cost-row:hover{background:#fafdf5}
+.cr-item{font-size:13px;font-weight:500;color:#333}
+.cr-cat{font-size:11px;color:var(--gr400)}
+.cr-rate{font-size:13px;font-weight:700;color:var(--g600)}
+.cr-unit{font-size:11px;color:var(--gr400)}
+
+/* ADMIN SECTION */
+.asec{background:#fff;border-radius:var(--rad);border:1px solid #e3e5dc;overflow:hidden;margin-bottom:14px}
+.asec-hdr{padding:11px 16px;background:var(--g800);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.asec-body{padding:16px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{padding:9px 12px;text-align:left;font-weight:700;color:var(--gr400);font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #eee;background:#fafaf7;white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid #f5f5f0;color:#333;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafdf5}
+.sx{overflow-x:auto}
+
+/* PROGRESS */
+.pbar{height:6px;background:var(--gr100);border-radius:3px;overflow:hidden}
+.pfill{height:100%;background:var(--g400);border-radius:3px;transition:width .4s}
+
+/* PRINT */
+@media print{
+  .sb,.topbar,.vfab,.vcap,.no-print,.overlay{display:none!important}
+  .main{margin-left:0!important}
+  .page{padding:0!important}
+  body{background:#fff!important}
+  .card{box-shadow:none!important}
+}
+
+/* UTIL */
+.hidden{display:none!important}
+.flex{display:flex;align-items:center}
+.flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.gap1{gap:6px}.gap2{gap:10px}
+.mt1{margin-top:8px}.mt2{margin-top:16px}
+.mb1{margin-bottom:8px}.mb2{margin-bottom:16px}
+.fw7{font-weight:700}.tg{color:var(--g600)}.tm{color:var(--gr400)}.tsm{font-size:12px}.txs{font-size:11px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;background:var(--g50);color:var(--g700);font-size:11px;font-weight:600;border:1px solid var(--g100)}
+.dvdr{border:none;border-top:1px solid #f0f0ea;margin:14px 0}
+.radio-grp{display:flex;gap:8px;flex-wrap:wrap}
+.ro{display:flex;align-items:center;gap:6px;padding:7px 13px;border:1.5px solid var(--gr100);border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s;font-family:var(--font)}
+.ro.active{border-color:var(--g400);background:var(--g50);color:var(--g700);font-weight:600}
+.ro input{display:none}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <button class="ltoggle" onclick="toggleLang()">🌐 <span id="ltlbl">ଓଡ଼ିଆ</span></button>
+  <div class="lbox">
+    <div class="lbrand">
+      <span class="icon">🌾</span>
+      <h1>KrishiSeva</h1>
+      <p class="tag">ଓଡ଼ିଶା କୃଷି ପ୍ରବନ୍ଧନ ମଞ୍ଚ</p>
+    </div>
+    <div class="ltabs">
+      <button class="ltab active" onclick="setRole('user',this)">👨‍🌾 <span id="lbl_farmer">Farmer Login</span></button>
+      <button class="ltab" onclick="setRole('admin',this)">⚙️ <span id="lbl_admin">Admin Login</span></button>
+    </div>
+    <div class="fg"><label id="lbl_mob">MOBILE NUMBER</label><input class="fc" id="lmob" placeholder="9XXXXXXXXX"></div>
+    <div class="fg"><label>PASSWORD</label><input class="fc" id="lpass" type="password" placeholder="••••••••"></div>
+    <button class="btn-login" onclick="doLogin()">Login →</button>
+    <p class="lnote">🔒 ସୁରକ୍ଷିତ — KrishiSeva v2.0 | Demo: any credentials</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="shell">
+    <aside class="sb" id="sidebar">
+      <div class="sb-brand">
+        <div class="sb-brand-icon">🌾</div>
+        <div><h1>KrishiSeva</h1><p>କୃଷି ପ୍ରବନ୍ଧନ ମଞ୍ଚ</p></div>
+      </div>
+      <div class="sb-user">
+        <div class="sb-av" id="sbAv">U</div>
+        <div><p class="sb-uname" id="sbName">User</p><span class="sb-urole" id="sbRole">🌾 Farmer</span></div>
+      </div>
+      <nav class="sb-nav" id="sbNav"></nav>
+      <div class="sb-footer">
+        <button class="ni logout" onclick="doLogout()"><span class="ni-icon">🚪</span> <span id="lbl_logout">Logout</span></button>
+      </div>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <div><div class="tb-title" id="tbTitle">KrishiSeva</div><div class="tb-sub" id="tbSub"></div></div>
+        <div class="tb-right no-print">
+          <button class="tbb" onclick="toggleLang()" id="tbLang">🌐 ଓଡ଼ିଆ</button>
+          <button class="tbb" id="tbVoice" onclick="handleVoice()">🎙️ Voice</button>
+          <button class="tbb" onclick="window.print()">🖨️ Print</button>
+        </div>
+      </header>
+      <div class="page" id="pageContent"></div>
+    </div>
+  </div>
+</div>
+<button class="vfab hidden" id="vfab" onclick="handleVoice()">🎙️ <span id="vfabLbl">Voice Help</span></button>
+<div class="vcap" id="vcap"></div>
+
+<!-- CHECKOUT MODAL -->
+<div class="overlay hidden" id="checkoutModal">
+  <div class="modal narrow">
+    <div class="mhdr"><div><h2>🛒 Checkout</h2><p id="cartMeta">0 items</p></div><button class="mclose" onclick="closeM('checkoutModal')">✕</button></div>
+    <div id="cartLines"></div>
+    <hr class="dvdr">
+    <div class="fg"><label>PAYMENT METHOD</label>
+      <select class="fc" id="payM" onchange="onPayChange()">
+        <option value="">-- Select --</option>
+        <option value="cod">💵 Cash on Delivery</option>
+        <option value="upi">📱 UPI</option>
+        <option value="credit">💳 Credit Card</option>
+        <option value="debit">💳 Debit Card</option>
+      </select>
+    </div>
+    <div class="fg hidden" id="bankRow"><label>SELECT BANK</label>
+      <select class="fc" id="bankSel">
+        <option value="">-- Select Bank --</option>
+        <option>SBI</option><option>Bank of India</option><option>Canara Bank</option><option>UCO Bank</option>
+        <option>HDFC Bank</option><option>ICICI Bank</option><option>Axis Bank</option><option>Kotak Mahindra</option>
+      </select>
+    </div>
+    <div style="background:var(--g50);border-radius:8px;padding:12px;margin-bottom:14px" class="flex-between">
+      <span class="tsm tm">Total:</span><span style="font-size:16px;font-weight:700;color:var(--g700)" id="cartTotal">₹0</span>
+    </div>
+    <button class="btn bp w100" onclick="placeOrder()">🔒 <span id="payBtnLbl">Place Order via Razorpay</span></button>
+    <p style="text-align:center;font-size:11px;color:var(--gr400);margin-top:8px">Secured by Razorpay. Recipient account to be configured.</p>
+  </div>
+</div>
+
+<!-- FIELD FORM MODAL -->
+<div class="overlay hidden" id="ffModal">
+  <div class="modal wide">
+    <div class="mhdr"><div><h2 id="ffTitle">📋 Field Data Entry</h2><p id="ffSub"></p></div><button class="mclose" onclick="closeM('ffModal')">✕</button></div>
+    <div id="ffBody"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════ STATE ═══════════════════════════
+const S={
+  lang:'en',role:'user',user:null,page:'',sub:'',
+  cart:[],photos:[],submitted:[],_costCat:'landPrep',
+  db:{
+    places:[
+      {id:'p1',name:'Bhubaneswar Farm A',nameOd:'ଭୁବନେଶ୍ୱର ─ A',dist:'Khordha',plots:[{n:'Plot-1 (2.5 ac)',a:2.5},{n:'Plot-2 (1.8 ac)',a:1.8}]},
+      {id:'p2',name:'Cuttack Block B',nameOd:'କଟକ ─ B',dist:'Cuttack',plots:[{n:'Plot-1 (3.0 ac)',a:3},{n:'Plot-2 (2.0 ac)',a:2}]},
+      {id:'p3',name:'Puri Coastal C',nameOd:'ପୁରୀ ─ C',dist:'Puri',plots:[{n:'Plot-1 (1.5 ac)',a:1.5}]},
+      {id:'p4',name:'Sambalpur D',nameOd:'ସମ୍ବଲପୁର ─ D',dist:'Sambalpur',plots:[{n:'Plot-1 (4.0 ac)',a:4}]},
+    ],
+    crops:{
+      cereals:[
+        {name:'Paddy (Kharif)',dur:'120d',seed:'25 kg/ac',space:'20×15 cm',season:'Kharif'},
+        {name:'Paddy (Rabi)',dur:'110d',seed:'25 kg/ac',space:'20×15 cm',season:'Rabi'},
+        {name:'Wheat',dur:'130d',seed:'40 kg/ac',space:'22×15 cm',season:'Rabi'},
+        {name:'Maize',dur:'100d',seed:'8 kg/ac',space:'60×25 cm',season:'Kharif'},
+        {name:'Jowar',dur:'105d',seed:'10 kg/ac',space:'45×15 cm',season:'Kharif'},
+        {name:'Bajra',dur:'90d',seed:'3 kg/ac',space:'45×15 cm',season:'Kharif'},
+        {name:'Ragi',dur:'110d',seed:'5 kg/ac',space:'22×10 cm',season:'Kharif'},
+      ],
+      pulses:[
+        {name:'Green Gram (Moong)',dur:'65d',seed:'15 kg/ac',space:'30×10 cm',season:'Kharif/Rabi'},
+        {name:'Black Gram (Biri)',dur:'70d',seed:'15 kg/ac',space:'30×10 cm',season:'Kharif'},
+        {name:'Arhar (Pigeon Pea)',dur:'180d',seed:'8 kg/ac',space:'60×20 cm',season:'Kharif'},
+        {name:'Lentil (Masur)',dur:'110d',seed:'35 kg/ac',space:'25×5 cm',season:'Rabi'},
+        {name:'Chickpea (Chana)',dur:'100d',seed:'60 kg/ac',space:'30×10 cm',season:'Rabi'},
+        {name:'Cowpea (Bora)',dur:'70d',seed:'20 kg/ac',space:'45×20 cm',season:'Kharif'},
+      ],
+      vegetables:[
+        {name:'Tomato',dur:'90d',seed:'150 g/ac',space:'60×45 cm',season:'Rabi/Summer'},
+        {name:'Brinjal',dur:'100d',seed:'200 g/ac',space:'60×60 cm',season:'All season'},
+        {name:'Chilli',dur:'90d',seed:'400 g/ac',space:'60×45 cm',season:'Kharif/Rabi'},
+        {name:'Okra (Bhindi)',dur:'60d',seed:'6 kg/ac',space:'45×30 cm',season:'Summer/Kharif'},
+        {name:'Bitter Gourd',dur:'70d',seed:'2 kg/ac',space:'150×100 cm',season:'Kharif/Summer'},
+        {name:'Cabbage',dur:'80d',seed:'200 g/ac',space:'45×45 cm',season:'Rabi'},
+        {name:'Cauliflower',dur:'90d',seed:'200 g/ac',space:'45×45 cm',season:'Rabi'},
+        {name:'Potato',dur:'90d',seed:'8 q/ac',space:'60×20 cm',season:'Rabi'},
+        {name:'Onion',dur:'120d',seed:'4 kg/ac',space:'15×10 cm',season:'Rabi'},
+        {name:'Broccoli',dur:'75d',seed:'250 g/ac',space:'45×45 cm',season:'Rabi'},
+        {name:'Pumpkin',dur:'80d',seed:'1.5 kg/ac',space:'200×100 cm',season:'Kharif/Summer'},
+      ],
+      fruits:[
+        {name:'Mango',dur:'Perennial',seed:'─',space:'10×10 m',season:'Perennial'},
+        {name:'Banana',dur:'11 months',seed:'220 suckers/ac',space:'1.8×1.8 m',season:'All season'},
+        {name:'Papaya',dur:'8 months',seed:'40 plants/ac',space:'2×2 m',season:'All season'},
+        {name:'Guava',dur:'Perennial',seed:'160 plants/ac',space:'5×5 m',season:'Perennial'},
+        {name:'Lemon/Lime',dur:'Perennial',seed:'─',space:'5×5 m',season:'Perennial'},
+        {name:'Pineapple',dur:'18 months',seed:'5500 suckers/ac',space:'60×30 cm',season:'All season'},
+        {name:'Watermelon',dur:'80d',seed:'1.5 kg/ac',space:'200×60 cm',season:'Summer'},
+        {name:'Jackfruit',dur:'Perennial',seed:'─',space:'10×10 m',season:'Perennial'},
+      ],
+      spices:[
+        {name:'Turmeric',dur:'240d',seed:'5 q/ac',space:'30×25 cm',season:'Kharif'},
+        {name:'Ginger',dur:'210d',seed:'6 q/ac',space:'25×20 cm',season:'Kharif'},
+        {name:'Garlic',dur:'130d',seed:'200 kg/ac',space:'15×7 cm',season:'Rabi'},
+        {name:'Coriander',dur:'90d',seed:'8 kg/ac',space:'25×5 cm',season:'Rabi'},
+        {name:'Chilli (dry)',dur:'150d',seed:'400 g/ac',space:'60×45 cm',season:'Kharif/Rabi'},
+        {name:'Cardamom',dur:'Perennial',seed:'─',space:'3×3 m',season:'Perennial'},
+      ],
+      oilseeds:[
+        {name:'Groundnut',dur:'120d',seed:'50 kg/ac',space:'30×10 cm',season:'Kharif'},
+        {name:'Sunflower',dur:'95d',seed:'2 kg/ac',space:'60×30 cm',season:'Rabi/Summer'},
+        {name:'Sesame',dur:'80d',seed:'2 kg/ac',space:'30×10 cm',season:'Kharif'},
+        {name:'Mustard',dur:'95d',seed:'2.5 kg/ac',space:'30×15 cm',season:'Rabi'},
+        {name:'Linseed',dur:'130d',seed:'8 kg/ac',space:'25×10 cm',season:'Rabi'},
+        {name:'Castor',dur:'150d',seed:'6 kg/ac',space:'90×60 cm',season:'Kharif'},
+      ],
+      medicinal:[
+        {name:'Ashwagandha',dur:'180d',seed:'5 kg/ac',space:'60×30 cm',season:'Kharif'},
+        {name:'Tulsi (Basil)',dur:'Perennial',seed:'500 g/ac',space:'30×20 cm',season:'All season'},
+        {name:'Aloe Vera',dur:'Perennial',seed:'2000 suckers/ac',space:'60×45 cm',season:'All season'},
+        {name:'Shatavari',dur:'24 months',seed:'3 kg/ac',space:'60×30 cm',season:'Kharif'},
+        {name:'Lemongrass',dur:'Perennial',seed:'─ (slips)',space:'60×30 cm',season:'All season'},
+        {name:'Stevia',dur:'Perennial',seed:'─ (cuttings)',space:'45×30 cm',season:'All season'},
+        {name:'Kalmegh',dur:'90d',seed:'2 kg/ac',space:'30×20 cm',season:'Kharif'},
+      ],
+      flowers:[
+        {name:'Marigold',dur:'60d',seed:'1 kg/ac',space:'30×30 cm',season:'All season'},
+        {name:'Rose',dur:'Perennial',seed:'─',space:'90×60 cm',season:'Perennial'},
+        {name:'Jasmine',dur:'Perennial',seed:'─',space:'120×90 cm',season:'Perennial'},
+        {name:'Chrysanthemum',dur:'90d',seed:'─ (cuttings)',space:'30×30 cm',season:'Kharif/Rabi'},
+        {name:'Tuberose',dur:'6 months',seed:'10000 bulbs/ac',space:'30×20 cm',season:'All season'},
+        {name:'Gerbera',dur:'Perennial',seed:'─',space:'30×30 cm',season:'All season'},
+        {name:'Gladiolus',dur:'3 months',seed:'20000 corms/ac',space:'20×15 cm',season:'Winter'},
+      ],
+      condiments:[
+        {name:'Fenugreek (Methi)',dur:'100d',seed:'12 kg/ac',space:'25×5 cm',season:'Rabi'},
+        {name:'Cumin (Jeera)',dur:'100d',seed:'4 kg/ac',space:'30×5 cm',season:'Rabi'},
+        {name:'Ajwain',dur:'120d',seed:'3 kg/ac',space:'30×15 cm',season:'Rabi'},
+        {name:'Fennel (Saunf)',dur:'150d',seed:'6 kg/ac',space:'45×20 cm',season:'Rabi'},
+        {name:'Curry Leaf',dur:'Perennial',seed:'─',space:'3×3 m',season:'Perennial'},
+        {name:'Mustard (Sarso)',dur:'95d',seed:'2.5 kg/ac',space:'30×15 cm',season:'Rabi'},
+      ],
+    },
+    nutrients:{
+      chemical:{
+        cereals:[{n:'NPK 40:20:20 kg/ac',t:'Basal at sowing',st:'Basal'},{n:'Urea 20 kg/ac',t:'30 DAS – active tillering',st:'Top Dress 1'},{n:'Urea 20 kg/ac',t:'50 DAS – panicle initiation',st:'Top Dress 2'},{n:'MOP 20 kg/ac',t:'Basal',st:'Basal'},{n:'ZnSO₄ 5 kg/ac',t:'Basal (once in 3 yrs)',st:'Micro'},{n:'Gypsum (S) 15 kg/ac',t:'Basal',st:'Micro'}],
+        pulses:[{n:'NPK 10:20:10 kg/ac',t:'Basal only',st:'Basal'},{n:'Rhizobium 600 g/ac',t:'Seed treatment before sowing',st:'Seed treat'},{n:'Boron 0.5 kg/ac',t:'Basal',st:'Micro'},{n:'ZnSO₄ 5 kg/ac',t:'Basal',st:'Micro'}],
+        vegetables:[{n:'FYM 10 t/ac',t:'20d before planting',st:'Pre-plant'},{n:'NPK 60:30:30 kg/ac',t:'Basal',st:'Basal'},{n:'Urea 25 kg/ac',t:'30 DAT',st:'Top Dress 1'},{n:'Urea 25 kg/ac',t:'60 DAT',st:'Top Dress 2'},{n:'Borax 1 kg/ac',t:'Basal',st:'Micro'},{n:'CaNO₃ 5 kg/ac',t:'Foliar at fruiting',st:'Foliar'}],
+        fruits:[{n:'FYM 20 kg/plant/yr',t:'Pre-monsoon June',st:'Annual'},{n:'NPK 1:0.5:0.5 kg/plant/yr',t:'2 equal splits',st:'Annual'},{n:'Urea 500 g/plant',t:'June/July',st:'Growth'},{n:'Micronutrient mix',t:'Foliar at flowering',st:'Foliar'}],
+        spices:[{n:'FYM 5 t/ac',t:'Before planting',st:'Pre-plant'},{n:'NPK 30:20:20 kg/ac',t:'Basal',st:'Basal'},{n:'Urea 20 kg/ac',t:'45 DAS',st:'Top Dress'},{n:'ZnSO₄ 5 kg/ac',t:'Basal',st:'Micro'}],
+        oilseeds:[{n:'NPK 20:20:20 kg/ac',t:'Basal',st:'Basal'},{n:'Gypsum 100 kg/ac',t:'Basal (groundnut S)',st:'Basal'},{n:'Urea 15 kg/ac',t:'30 DAS',st:'Top Dress'},{n:'Boron 0.5 kg/ac',t:'Foliar at flowering',st:'Foliar'}],
+        medicinal:[{n:'FYM 3 t/ac',t:'Before planting',st:'Pre-plant'},{n:'NPK 20:10:10 kg/ac',t:'Basal',st:'Basal'},{n:'Urea 15 kg/ac',t:'45 DAS',st:'Top Dress'}],
+        flowers:[{n:'FYM 10 t/ac',t:'Before planting',st:'Pre-plant'},{n:'NPK 40:20:20 kg/ac',t:'Basal',st:'Basal'},{n:'Urea 20 kg/ac',t:'30 DAP',st:'Top Dress'},{n:'Boron 0.5 kg/ac',t:'Foliar at bud stage',st:'Foliar'}],
+        condiments:[{n:'FYM 5 t/ac',t:'Pre-plant',st:'Pre-plant'},{n:'NPK 30:20:20 kg/ac',t:'Basal',st:'Basal'},{n:'Urea 15 kg/ac',t:'30 DAS',st:'Top Dress'}],
+      },
+      organic:{
+        cereals:[{n:'FYM / Compost 5 t/ac',t:'15d before sowing',st:'Pre-sow'},{n:'Vermicompost 1 t/ac',t:'Basal – mix in soil',st:'Basal'},{n:'Neem Cake 100 kg/ac',t:'Basal',st:'Basal'},{n:'PSB Biofertilizer 500 g/ac',t:'Seed + soil treatment',st:'Seed+Soil'},{n:'Azospirillum 500 g/ac',t:'Seed treatment',st:'Seed treat'},{n:'Liquid biofertilizer',t:'Foliar at 30 & 60 DAS',st:'Foliar'}],
+        pulses:[{n:'FYM 2 t/ac',t:'Basal',st:'Basal'},{n:'Rhizobium + PSB 500 g/ac',t:'Seed treatment',st:'Seed treat'},{n:'Vermicompost 500 kg/ac',t:'Basal',st:'Basal'}],
+        vegetables:[{n:'FYM 15 t/ac',t:'20d before transplanting',st:'Pre-plant'},{n:'Vermicompost 2 t/ac',t:'Basal',st:'Basal'},{n:'Neem Cake 150 kg/ac',t:'Basal',st:'Basal'},{n:'Liquid biofertilizer',t:'Foliar – monthly',st:'Foliar'},{n:'Panchagavya 3%',t:'Foliar at flowering',st:'Foliar'}],
+        fruits:[{n:'FYM 30 kg/plant/yr',t:'Pre-monsoon',st:'Annual'},{n:'Vermicompost 5 kg/plant',t:'June/July',st:'Annual'},{n:'Neem Cake 2 kg/plant',t:'June/July',st:'Annual'},{n:'Jeevamrutha',t:'Soil drench monthly',st:'Monthly'}],
+        spices:[{n:'FYM 8 t/ac',t:'Pre-plant',st:'Pre-plant'},{n:'Vermicompost 2 t/ac',t:'Basal',st:'Basal'},{n:'Neem Cake 100 kg/ac',t:'Basal',st:'Basal'}],
+        oilseeds:[{n:'FYM 5 t/ac',t:'Basal',st:'Basal'},{n:'Neem Cake 100 kg/ac',t:'Basal',st:'Basal'},{n:'Vermicompost 1 t/ac',t:'Basal',st:'Basal'}],
+        medicinal:[{n:'FYM 4 t/ac',t:'Pre-plant',st:'Pre-plant'},{n:'Vermicompost 1 t/ac',t:'Basal',st:'Basal'},{n:'Neem Cake 50 kg/ac',t:'Basal',st:'Basal'}],
+        flowers:[{n:'FYM 12 t/ac',t:'Pre-plant',st:'Pre-plant'},{n:'Vermicompost 2 t/ac',t:'Basal',st:'Basal'},{n:'Liquid biofertilizer',t:'Foliar every 15 days',st:'Foliar'},{n:'Neem Cake 100 kg/ac',t:'Basal',st:'Basal'}],
+        condiments:[{n:'FYM 5 t/ac',t:'Pre-plant',st:'Pre-plant'},{n:'Vermicompost 1 t/ac',t:'Basal',st:'Basal'},{n:'PSB Biofertilizer',t:'Seed treatment',st:'Seed treat'}],
+      }
+    },
+    protection:{
+      chemical:{
+        cereals:[{p:'Stem Borer',a:'Chlorpyrifos 20EC',d:'2 ml/L',m:'Foliar spray',t:'ETL >5% at tiller stage'},{p:'Blast (Fungal)',a:'Tricyclazole 75WP',d:'0.6 g/L',m:'Foliar spray',t:'Pre-booting; repeat 15d'},{p:'BPH/Hopper',a:'Buprofezin 25SC',d:'1.5 ml/L',m:'Basal spray',t:'>5 hoppers/tiller'},{p:'Sheath Blight',a:'Validamycin 3SL',d:'2 ml/L',m:'Foliar spray',t:'Tillering to heading'},{p:'Narrow-leaf Weeds',a:'Butachlor 50EC',d:'2 L/ac',m:'Soil drench',t:'3–5 DAS in standing water'},{p:'BLB (Bacteria)',a:'Copper Oxychloride',d:'3 g/L',m:'Foliar spray',t:'At first symptom'},{p:'Rodents',a:'Zinc Phosphide 80WP',d:'5 g/bait',m:'Bait placement',t:'At establishment'},{p:'Algae (green scum)',a:'Copper Sulphate',d:'2.5 kg/ha',m:'Broadcasting',t:'In stagnant water'}],
+        pulses:[{p:'Pod Borer',a:'Chlorpyrifos 20EC',d:'2 ml/L',m:'Foliar',t:'At 50% flowering'},{p:'Aphids',a:'Dimethoate 30EC',d:'1.7 ml/L',m:'Foliar',t:'At infestation'},{p:'Powdery Mildew',a:'Hexaconazole 5SC',d:'1 ml/L',m:'Foliar',t:'At first symptom'},{p:'Leaf Spot',a:'Mancozeb 75WP',d:'2.5 g/L',m:'Foliar',t:'Fortnightly'},{p:'Root Rot',a:'Carbendazim 50WP',d:'1 g/kg seed',m:'Seed treatment',t:'Before sowing'}],
+        vegetables:[{p:'Fruit Borer',a:'Spinosad 45SC',d:'0.3 ml/L',m:'Foliar',t:'At 25–30 DAT'},{p:'Aphids/Whitefly',a:'Imidacloprid 17.8SL',d:'0.5 ml/L',m:'Foliar',t:'At infestation'},{p:'Early Blight',a:'Mancozeb 75WP',d:'2.5 g/L',m:'Foliar',t:'Fortnightly'},{p:'Damping Off',a:'Captan 75WP',d:'2 g/L',m:'Soil drench',t:'Nursery stage'},{p:'Leaf Miner',a:'Abamectin 1.8EC',d:'0.5 ml/L',m:'Foliar',t:'At initiation'},{p:'Root Rot (Pythium)',a:'Metalaxyl 35WS',d:'6 g/kg seed',m:'Seed treatment',t:'Before sowing'},{p:'Thrips',a:'Fipronil 5SC',d:'1.5 ml/L',m:'Foliar',t:'At infestation'},{p:'Spider Mites',a:'Propargite 57EC',d:'2 ml/L',m:'Foliar',t:'At infestation'}],
+        fruits:[{p:'Mango Hopper',a:'Imidacloprid 17.8SL',d:'0.5 ml/L',m:'Foliar',t:'At flowering'},{p:'Fruit Fly',a:'Malathion 50EC + jaggery',d:'2 ml/L + 100g',m:'Bait spray',t:'At fruit development'},{p:'Powdery Mildew',a:'Sulphur 80WP',d:'3 g/L',m:'Foliar',t:'At first symptom'},{p:'Anthracnose',a:'Carbendazim 50WP',d:'1 g/L',m:'Foliar',t:'Pre-harvest'},{p:'Mealybug',a:'Chlorpyrifos 20EC',d:'2.5 ml/L',m:'Foliar',t:'At infestation'}],
+        spices:[{p:'Rhizome Rot',a:'Metalaxyl 35WS',d:'6 g/kg seed',m:'Seed treatment',t:'Before sowing'},{p:'Leaf Blight',a:'Zineb 75WP',d:'2 g/L',m:'Foliar',t:'Fortnightly'},{p:'Thrips',a:'Dimethoate 30EC',d:'1.5 ml/L',m:'Foliar',t:'At infestation'},{p:'Nematodes',a:'Carbofuran 3G',d:'8 kg/ac',m:'Soil incorporation',t:'Before planting'}],
+        oilseeds:[{p:'Hairy Caterpillar',a:'Chlorpyrifos 20EC',d:'2 ml/L',m:'Foliar',t:'At larval stage'},{p:'Tikka (Groundnut)',a:'Mancozeb 75WP',d:'2.5 g/L',m:'Foliar',t:'Fortnightly from 45 DAS'},{p:'Aphids',a:'Imidacloprid 17.8SL',d:'0.5 ml/L',m:'Foliar',t:'At infestation'},{p:'Alternaria Blight',a:'Iprodione 50WP',d:'2 g/L',m:'Foliar',t:'At first symptom'}],
+        medicinal:[{p:'Root Rot',a:'Carbendazim 50WP',d:'1 g/L',m:'Soil drench',t:'At symptom'},{p:'Leaf Spot',a:'Mancozeb 75WP',d:'2.5 g/L',m:'Foliar',t:'Fortnightly'},{p:'Sucking Pests',a:'Imidacloprid 17.8SL',d:'0.5 ml/L',m:'Foliar',t:'At infestation'}],
+        flowers:[{p:'Thrips/Mites',a:'Dimethoate 30EC',d:'1.5 ml/L',m:'Foliar',t:'At infestation'},{p:'Wilt (Fusarium)',a:'Carbendazim 50WP',d:'1 g/L',m:'Soil drench',t:'At first symptom'},{p:'Leaf Blight',a:'Mancozeb 75WP',d:'2.5 g/L',m:'Foliar',t:'Fortnightly'},{p:'Aphids',a:'Imidacloprid 17.8SL',d:'0.5 ml/L',m:'Foliar',t:'At infestation'}],
+        condiments:[{p:'Aphids',a:'Imidacloprid 17.8SL',d:'0.5 ml/L',m:'Foliar',t:'At infestation'},{p:'Powdery Mildew',a:'Sulphur 80WP',d:'3 g/L',m:'Foliar',t:'Fortnightly'},{p:'Cumin Wilt',a:'Carbendazim 50WP',d:'1 g/kg seed',m:'Seed treatment',t:'Before sowing'},{p:'Nematodes',a:'Carbofuran 3G',d:'8 kg/ac',m:'Soil incorporation',t:'Before sowing'}],
+      },
+      organic:{
+        cereals:[{p:'Stem Borer',a:'Neem Oil 0.5%',d:'5 ml/L',m:'Foliar',t:'Every 15 days'},{p:'Fungal Diseases',a:'Trichoderma viride',d:'4 g/L',m:'Soil + foliar',t:'At disease initiation'},{p:'Sucking Pests',a:'Beauveria bassiana',d:'5 g/L',m:'Foliar',t:'Early infestation'},{p:'Soil Insects',a:'Bacillus thuringiensis',d:'2 g/L',m:'Soil drench',t:'Early larval stage'},{p:'BLB (Bacteria)',a:'Pseudomonas fluorescens',d:'5 g/L',m:'Foliar',t:'Preventive'},{p:'Weeds',a:'Manual weeding/mulching',d:'─',m:'Manual',t:'20–25 DAS'},{p:'Algae',a:'Charcoal ash broadcast',d:'10 kg/ac',m:'Broadcasting',t:'At appearance'}],
+        pulses:[{p:'Pod Borer',a:'Bacillus thuringiensis',d:'2 g/L',m:'Foliar',t:'At early flowering'},{p:'Aphids',a:'Neem Oil 3% + soap',d:'5 ml/L',m:'Foliar',t:'Fortnightly'},{p:'Fungal',a:'Trichoderma viride',d:'4 g/L',m:'Soil drench',t:'Before planting'}],
+        vegetables:[{p:'Fruit Borer',a:'Bacillus thuringiensis',d:'2 g/L',m:'Foliar',t:'Early larval stage'},{p:'Aphids/Whitefly',a:'Neem Oil 3% + soap',d:'5 ml/L',m:'Foliar',t:'Fortnightly'},{p:'Damping Off',a:'Trichoderma viride',d:'4 g/L',m:'Soil drench',t:'Before transplanting'},{p:'Whitefly',a:'Yellow sticky traps',d:'10/ac',m:'Trapping',t:'Continuous'},{p:'Thrips',a:'Neem Oil 0.3%',d:'3 ml/L',m:'Foliar',t:'Fortnightly'},{p:'Virus (through vectors)',a:'Reflective mulch + Neem',d:'─',m:'Preventive',t:'At planting'}],
+        fruits:[{p:'Fruit Fly',a:'Pheromone traps + Neem Oil',d:'5 traps/ac',m:'Trapping',t:'At fruit development'},{p:'Powdery Mildew',a:'Baking Soda + Neem Oil',d:'5 g + 5 ml/L',m:'Foliar',t:'At first symptom'},{p:'Mealybug',a:'Neem Oil 3%',d:'5 ml/L',m:'Foliar',t:'At infestation'}],
+        spices:[{p:'Rhizome Rot',a:'Trichoderma + Pseudomonas',d:'4 g/L each',m:'Soil drench',t:'At planting'},{p:'Leaf Spot',a:'Neem Oil 0.5%',d:'5 ml/L',m:'Foliar',t:'Fortnightly'},{p:'Thrips',a:'Neem Seed Kernel Extract',d:'50 g/L',m:'Foliar',t:'At infestation'}],
+        oilseeds:[{p:'Hairy Caterpillar',a:'Neem Seed Kernel Extract',d:'50 g/L',m:'Foliar',t:'At larval stage'},{p:'Aphids',a:'Neem Oil 3%',d:'5 ml/L',m:'Foliar',t:'At infestation'}],
+        medicinal:[{p:'Root diseases',a:'Trichoderma viride',d:'4 g/kg soil',m:'Soil treatment',t:'Before planting'},{p:'Sucking pests',a:'Neem Oil 0.3%',d:'3 ml/L',m:'Foliar',t:'Fortnightly'}],
+        flowers:[{p:'Thrips',a:'Neem Oil 0.3%',d:'3 ml/L',m:'Foliar',t:'Fortnightly'},{p:'Fungal',a:'Trichoderma viride',d:'4 g/L',m:'Foliar',t:'At symptom'},{p:'Aphids',a:'Neem Oil 3%',d:'5 ml/L',m:'Foliar',t:'At infestation'}],
+        condiments:[{p:'Aphids',a:'Neem Oil 3%',d:'5 ml/L',m:'Foliar',t:'Fortnightly'},{p:'Root Rot',a:'Trichoderma viride',d:'4 g/L',m:'Soil drench',t:'Before sowing'}],
+      }
+    },
+    schedules:{
+      cereals:[
+        {w:'Week 1–2',tk:'Land Preparation & Seed Treatment',tkOd:'ଜମି ପ୍ରସ୍ତୁତି ଓ ବୀଜ ଶୋଧ',d:'Deep ploughing; FYM 5t/ac; soil test; Thiram 75WS @ 3g/kg seed treatment'},
+        {w:'Week 2–3',tk:'Sowing / Transplanting',tkOd:'ବୀଜ ବୁଣିବା / ରୋପଣ',d:'Seed rate 25 kg/ac; row spacing 20×15 cm; seed drill preferred; line sowing'},
+        {w:'Week 3–4',tk:'Basal Fertilizer Application',tkOd:'ମୂଳ ସାର ପ୍ରୟୋଗ',d:'NPK 40:20:20 kg/ac; or FYM 5t + Neem Cake 100 kg/ac (organic option)'},
+        {w:'Week 5–6',tk:'1st Weeding + Gap Filling',tkOd:'ଘାସ ହଟ ଓ ଜଳ ସେଚ',d:'Manual/chemical weeding; gap filling; 1st irrigation if rainfall deficit'},
+        {w:'Week 7–8',tk:'1st Top Dressing',tkOd:'1ମ ଉପରୁ ସାର ପ୍ରୟୋଗ',d:'Urea 20 kg/ac at active tillering (30 DAS); irrigate after application'},
+        {w:'Week 9–10',tk:'Plant Protection Monitoring',tkOd:'ଉଦ୍ଭିଦ ସୁରକ୍ଷା ଜଞ୍ଚ',d:'Monitor stem borer, blast, BPH; spray at ETL; install light traps'},
+        {w:'Week 11–12',tk:'2nd Top Dressing',tkOd:'2ୟ ଉପରୁ ସାର ପ୍ରୟୋଗ',d:'Urea 20 kg/ac at panicle initiation (50 DAS); 2nd irrigation'},
+        {w:'Week 14–16',tk:'Harvest & Post-Harvest',tkOd:'ଅମଳ ଓ ଗଚ୍ଛିତ',d:'Harvest at 80% maturity; threshing; sun drying to 14% moisture; proper storage. Expected: 18–22 qtl/ac'},
+      ],
+      vegetables:[
+        {w:'Week 1',tk:'Nursery Preparation',tkOd:'ନার্ সারୀ ପ୍ରସ୍ତୁତି',d:'Raised bed nursery; FYM + Trichoderma soil treatment; Pro-tray sowing'},
+        {w:'Week 2–3',tk:'Land Prep & Transplanting',tkOd:'ଜମି ଓ ରୋପଣ',d:'Raised beds; Basal NPK; 21-day old seedlings; spacing 60×45 cm; drip irrigation preferred'},
+        {w:'Week 4–5',tk:'Irrigation & 1st Weeding',tkOd:'ଜଳ ─ ଓ ─ ଘାସ ─ ହଟ',d:'Regular irrigation 2–3 days interval; gap filling; manual weeding'},
+        {w:'Week 6',tk:'1st Top Dressing',tkOd:'1ମ ଉପରୁ ସାର',d:'Urea 25 kg/ac; foliar spray of micronutrients'},
+        {w:'Week 7–8',tk:'Plant Protection',tkOd:'ଉଦ୍ଭିଦ ─ ସୁରକ୍ଷା',d:'Monitor fruit borer, aphids, mites; install pheromone/sticky traps; spray at ETL'},
+        {w:'Week 9+',tk:'Regular Harvest',tkOd:'ନିୟମିତ ─ ଅମଳ',d:'Harvest at commercial maturity every 2–3 days; grade and pack for market. Expected 40–80 qtl/ac'},
+      ],
+      fruits:[
+        {w:'June',tk:'Pre-monsoon Preparation',tkOd:'ବର୍ଷା ─ ପୂର୍ବ ─ ପ୍ରସ୍ତୁତି',d:'Pruning of dead/diseased wood; basin making; FYM application'},
+        {w:'July',tk:'Fertilizer & Pest Management',tkOd:'ସାର ─ ଓ ─ ସୁରକ୍ଷା',d:'Full fertilizer dose; irrigation support; monitor hopper and fruit fly'},
+        {w:'Aug–Sep',tk:'Plant Protection',tkOd:'ଉଦ୍ଭିଦ ─ ସୁରକ୍ଷା',d:'Spray against mango hopper, fruit fly, powdery mildew; pheromone traps'},
+        {w:'Oct–Jan',tk:'Flowering & Fruiting',tkOd:'ଫୁଲ ─ ଓ ─ ଫଳ',d:'Water management; micronutrient spray; bagging for quality; thinning'},
+        {w:'Feb–May',tk:'Harvest & Marketing',tkOd:'ଅମଳ ─ ଓ ─ ବଜାର',d:'Harvest at colour break; grading by size and weight; cold storage if available'},
+      ],
+    },
+    costings:{
+      landPrep:[{item:'Tractor Ploughing',itemOd:'ଟ୍ରାକ୍ଟର ହଳ',unit:'per acre',rate:1200,cat:'Machinery'},{item:'Rotavator Service',itemOd:'ରୋଟାଭେଟର',unit:'per acre',rate:800,cat:'Machinery'},{item:'Levelling/Bunding',itemOd:'ସ୍ତରୀକରଣ',unit:'per acre',rate:600,cat:'Machinery'},{item:'Land Prep Labour',itemOd:'ଶ୍ରମ',unit:'per day',rate:350,cat:'Labour'}],
+      labour:[{item:'Transplanting Labour',itemOd:'ରୋପଣ ଶ୍ରମ',unit:'per acre',rate:1500,cat:'Labour'},{item:'Harvesting Labour',itemOd:'ଅମଳ ଶ୍ରମ',unit:'per acre',rate:2000,cat:'Labour'},{item:'Weeding Labour',itemOd:'ଘାସ ─ ହଟ ─ ଶ୍ରମ',unit:'per acre',rate:800,cat:'Labour'},{item:'Irrigation Labour',itemOd:'ଜଳ ─ ଶ୍ରମ',unit:'per acre/month',rate:600,cat:'Labour'},{item:'Spraying Labour',itemOd:'ସ୍ପ୍ରେ ─ ଶ୍ରମ',unit:'per acre',rate:400,cat:'Labour'}],
+      irrigation:[{item:'Borewell (diesel)',itemOd:'ବୋରୱେଲ',unit:'per hour',rate:120,cat:'Irrigation'},{item:'Drip System (install)',itemOd:'ଡ୍ରିପ ─ ସ‌ ─ ‌',unit:'per acre',rate:45000,cat:'Infrastructure'},{item:'Sprinkler (install)',itemOd:'ସ୍ପ୍ରିଙ୍କ ─ ‌ ─ ‌',unit:'per acre',rate:25000,cat:'Infrastructure'}],
+      nutrients_c:[{item:'Urea 46% (50kg bag)',itemOd:'ଇୁରିଆ 50 kg',unit:'per bag',rate:280,cat:'Chemical'},{item:'DAP (50kg bag)',itemOd:'DAP 50 kg',unit:'per bag',rate:1350,cat:'Chemical'},{item:'NPK 20-20-0 (50kg)',itemOd:'NPK 50 kg',unit:'per bag',rate:1450,cat:'Chemical'},{item:'MOP (50kg bag)',itemOd:'MOP 50 kg',unit:'per bag',rate:1100,cat:'Chemical'},{item:'Gypsum (50kg)',itemOd:'ଜିପ୍ ─ ‌',unit:'per bag',rate:180,cat:'Chemical'},{item:'ZnSO₄ (25kg)',itemOd:'ଜ‌ ─ ‌',unit:'per bag',rate:900,cat:'Chemical'}],
+      nutrients_o:[{item:'FYM / Compost',itemOd:'ଗୋଶ ─ ଖ‌ ─ ‌',unit:'per tonne',rate:800,cat:'Organic'},{item:'Vermicompost',itemOd:'ଭ‌ ─ ‌ ─ ‌',unit:'per tonne',rate:5000,cat:'Organic'},{item:'Neem Cake (25kg)',itemOd:'ନିମ 25 kg',unit:'per bag',rate:380,cat:'Organic'},{item:'PSB Biofertilizer',itemOd:'PSB',unit:'per kg',rate:120,cat:'Organic'},{item:'Azospirillum',itemOd:'ଆ‌ ─ ‌',unit:'per kg',rate:110,cat:'Organic'},{item:'Trichoderma viride',itemOd:'ଟ‌ ─ ‌',unit:'per kg',rate:250,cat:'Organic'}],
+      protection_c:[{item:'Chlorpyrifos 20EC',itemOd:'କ‌ ─ ‌',unit:'per litre',rate:320,cat:'Insecticide'},{item:'Imidacloprid 17.8SL',itemOd:'ଇ‌ ─ ‌',unit:'per 100ml',rate:380,cat:'Insecticide'},{item:'Mancozeb 75WP',itemOd:'ମ‌ ─ ‌',unit:'per kg',rate:280,cat:'Fungicide'},{item:'Tricyclazole 75WP',itemOd:'ଟ‌ ─ ‌',unit:'per 100g',rate:120,cat:'Fungicide'},{item:'Butachlor 50EC',itemOd:'ବ‌ ─ ‌',unit:'per litre',rate:450,cat:'Herbicide'},{item:'Glyphosate 41SL',itemOd:'ଗ‌ ─ ‌',unit:'per litre',rate:280,cat:'Herbicide'}],
+      protection_o:[{item:'Neem Oil (1L)',itemOd:'ନିମ ─ ତ‌',unit:'per litre',rate:350,cat:'Organic'},{item:'Beauveria bassiana',itemOd:'ବ‌ ─ ‌',unit:'per kg',rate:420,cat:'Bio-pest'},{item:'Bacillus thuringiensis',itemOd:'ବ‌ ─ ‌',unit:'per kg',rate:380,cat:'Bio-pest'},{item:'Pheromone Trap',itemOd:'ଫ‌ ─ ‌',unit:'per trap',rate:80,cat:'Trap'},{item:'Yellow Sticky Trap (10)',itemOd:'ହ‌ ─ ‌',unit:'per 10 pcs',rate:150,cat:'Trap'}],
+      implements:[{item:'Tractor (rental)',itemOd:'ଟ‌ ─ ‌',unit:'per hour',rate:600,cat:'Machinery'},{item:'Sprayer 16L (knapsack)',itemOd:'ସ‌ ─ ‌',unit:'per piece',rate:2200,cat:'Equipment'},{item:'Power Tiller',itemOd:'ପ‌ ─ ‌',unit:'per day',rate:1800,cat:'Machinery'},{item:'Rice Transplanter',itemOd:'ଟ‌ ─ ‌',unit:'per acre',rate:3500,cat:'Machinery'},{item:'Thresher (rental)',itemOd:'ଥ‌ ─ ‌',unit:'per quintal',rate:80,cat:'Machinery'},{item:'Hand Weeder',itemOd:'ହ‌ ─ ‌',unit:'per piece',rate:450,cat:'Equipment'},{item:'Dibbler',itemOd:'ଡ‌ ─ ‌',unit:'per piece',rate:280,cat:'Equipment'}],
+      landRevenue:[{item:'Land Revenue (Odisha)',itemOd:'ଜ‌ ─ ‌',unit:'per acre/year',rate:200,cat:'Revenue'},{item:'Irrigation Cess',itemOd:'ଜ‌ ─ ‌',unit:'per acre/season',rate:150,cat:'Revenue'},{item:'Patta Renewal Fee',itemOd:'ପ‌ ─ ‌',unit:'per 5 years',rate:500,cat:'Revenue'}],
+    },
+    products:[
+      {id:'lp1',n:'Tractor Ploughing',nOd:'ଟ୍ ─ ‌',cat:'landPrep',price:1200,unit:'/ac',em:'🚜',del:'On request'},
+      {id:'lp2',n:'Rotavator Service',nOd:'ର‌ ─ ‌',cat:'landPrep',price:800,unit:'/ac',em:'⚙️',del:'On request'},
+      {id:'lp3',n:'Levelling Service',nOd:'ସ‌ ─ ‌',cat:'landPrep',price:600,unit:'/ac',em:'📐',del:'On request'},
+      {id:'n1',n:'NPK 20-20-0 (50kg)',nOd:'NPK 50 kg',cat:'nutrition',price:1450,unit:'/bag',em:'🌱',del:'3-5 days'},
+      {id:'n2',n:'Urea 46% (50kg)',nOd:'ଇୁ‌ ─ ‌',cat:'nutrition',price:280,unit:'/bag',em:'💊',del:'2-3 days'},
+      {id:'n3',n:'Neem Cake (25kg)',nOd:'ନ‌ ─ ‌',cat:'nutrition',price:380,unit:'/bag',em:'🍃',del:'3-4 days'},
+      {id:'n4',n:'Vermicompost (10kg)',nOd:'ଭ‌ ─ ‌',cat:'nutrition',price:220,unit:'/bag',em:'🪱',del:'2-3 days'},
+      {id:'n5',n:'DAP (50kg)',nOd:'DAP',cat:'nutrition',price:1350,unit:'/bag',em:'💧',del:'3-5 days'},
+      {id:'p1',n:'Chlorpyrifos 20EC',nOd:'କ‌ ─ ‌',cat:'protection',price:320,unit:'/L',em:'🧪',del:'2-3 days'},
+      {id:'p2',n:'Mancozeb 75WP',nOd:'ମ‌ ─ ‌',cat:'protection',price:280,unit:'/kg',em:'🔬',del:'2-3 days'},
+      {id:'p3',n:'Neem Oil (1L)',nOd:'ନ‌ ─ ‌',cat:'protection',price:350,unit:'/L',em:'🌿',del:'3-4 days'},
+      {id:'p4',n:'Trichoderma (1kg)',nOd:'ଟ‌ ─ ‌',cat:'protection',price:250,unit:'/kg',em:'🍄',del:'3-4 days'},
+      {id:'i1',n:'Sprayer 16L',nOd:'ସ‌ ─ ‌',cat:'implements',price:2200,unit:'/pc',em:'🔧',del:'5-7 days'},
+      {id:'i2',n:'Hand Weeder',nOd:'ହ‌ ─ ‌',cat:'implements',price:450,unit:'/pc',em:'🌾',del:'3-4 days'},
+      {id:'i3',n:'Dibbler Set',nOd:'ଡ‌ ─ ‌',cat:'implements',price:280,unit:'/pc',em:'🪛',del:'2-3 days'},
+    ],
+    formQuestions:[
+      {k:'soilPH',lbl:'Soil pH',lblOd:'ମାଟି pH',type:'number',unit:'',step:0.1,min:0,max:14},
+      {k:'ec',lbl:'EC (dS/m)',lblOd:'ଇ‌ ─ ‌ (dS/m)',type:'number',unit:'dS/m',step:0.01,min:0,max:10},
+      {k:'oc',lbl:'Organic Carbon (%)',lblOd:'ଜ‌ ─ ‌ (%)',type:'number',unit:'%',step:0.01,min:0,max:5},
+      {k:'rN',lbl:'Residual N (kg/ha)',lblOd:'ଅ‌ ─ N',type:'number',unit:'kg/ha',step:1,min:0,max:500},
+      {k:'rP',lbl:'Residual P (kg/ha)',lblOd:'ଅ‌ ─ P',type:'number',unit:'kg/ha',step:1,min:0,max:200},
+      {k:'rK',lbl:'Residual K (kg/ha)',lblOd:'ଅ‌ ─ K',type:'number',unit:'kg/ha',step:1,min:0,max:500},
+      {k:'rS',lbl:'Residual S (kg/ha)',lblOd:'ଅ‌ ─ S',type:'number',unit:'kg/ha',step:1,min:0,max:100},
+      {k:'nutType',lbl:'Nutrition Type Used',lblOd:'ପ‌ ─ ‌ ─ ‌',type:'select',opts:['Chemical','Organic','Both']},
+      {k:'nutUsed',lbl:'Nutrition Products Used',lblOd:'ବ‌ ─ ‌ ─ ‌',type:'text'},
+      {k:'nutCost',lbl:'Nutrition Cost (₹)',lblOd:'ସ‌ ─ ‌ (₹)',type:'number',unit:'₹',step:1,min:0},
+      {k:'protType',lbl:'Protection Type Used',lblOd:'ସ‌ ─ ‌ ─ ‌',type:'select',opts:['Chemical','Organic','Both','None']},
+      {k:'protUsed',lbl:'Protection Products',lblOd:'ସ‌ ─ ‌',type:'text'},
+      {k:'protCost',lbl:'Protection Cost (₹)',lblOd:'ସ‌ ─ ‌ (₹)',type:'number',unit:'₹',step:1,min:0},
+      {k:'irrigations',lbl:'No. of Irrigations',lblOd:'ଜ‌ ─ ‌',type:'number',unit:'times',step:1,min:0},
+      {k:'labourCost',lbl:'Labour Cost (₹)',lblOd:'ଶ‌ ─ ‌ (₹)',type:'number',unit:'₹',step:1,min:0},
+      {k:'machCost',lbl:'Machinery Cost (₹)',lblOd:'ଯ‌ ─ ‌ (₹)',type:'number',unit:'₹',step:1,min:0},
+      {k:'produce',lbl:'Produce Type',lblOd:'ଉ‌ ─ ‌',type:'select',opts:['Grain','Vegetable','Fruit','Fiber','Spice','Oil','Medicinal','Flower']},
+      {k:'harvest',lbl:'Harvest Amount (qtl/ac)',lblOd:'ଅ‌ ─ ‌ (qtl/ac)',type:'number',unit:'qtl/ac',step:0.1,min:0},
+      {k:'mktPrice',lbl:'Market Price (₹/qtl)',lblOd:'ବ‌ ─ ‌ (₹/qtl)',type:'number',unit:'₹/qtl',step:1,min:0},
+      {k:'revenue',lbl:'Total Revenue (₹)',lblOd:'ମ‌ ─ ‌ (₹)',type:'number',unit:'₹',step:1,min:0},
+      {k:'remarks',lbl:'Remarks / Observations',lblOd:'ଟ‌ ─ ‌',type:'textarea'},
+    ],
+    farmRecords:[
+      {farmer:'Ramesh Panda',place:'Bhubaneswar A',crop:'Paddy (Kharif)',cropCat:'cereals',date:'Jun 3, 2025',soilPH:6.4,ec:0.45,oc:0.52,rN:180,rP:14,rK:92,rS:9,nutType:'Chemical',nutUsed:'Urea, DAP, MOP',nutCost:4200,protType:'Chemical',protUsed:'Chlorpyrifos',protCost:850,labourCost:3500,machCost:2000,produce:'Grain',harvest:22,mktPrice:2200,revenue:48400,status:'verified'},
+      {farmer:'Sunita Behera',place:'Cuttack B',crop:'Tomato',cropCat:'vegetables',date:'Jun 5, 2025',soilPH:6.8,ec:0.38,oc:0.70,rN:210,rP:18,rK:110,rS:11,nutType:'Organic',nutUsed:'FYM, Vermicompost, Neem Cake',nutCost:3600,protType:'Organic',protUsed:'Neem Oil, Trichoderma',protCost:900,labourCost:5000,machCost:1800,produce:'Vegetable',harvest:60,mktPrice:800,revenue:48000,status:'submitted'},
+      {farmer:'Bijay Nayak',place:'Puri C',crop:'Groundnut',cropCat:'oilseeds',date:'Jun 7, 2025',soilPH:5.9,ec:0.42,oc:0.48,rN:95,rP:10,rK:78,rS:7,nutType:'Both',nutUsed:'NPK + FYM + Neem Cake',nutCost:3200,protType:'Chemical',protUsed:'Mancozeb',protCost:600,labourCost:4000,machCost:1500,produce:'Oil',harvest:12,mktPrice:5500,revenue:66000,status:'submitted'},
+    ],
+    users:[
+      {id:'u1',name:'Ramesh Panda',mobile:'9876543210',role:'user',district:'Khordha',crops:['Paddy (Kharif)'],places:['Bhubaneswar A'],active:true},
+      {id:'u2',name:'Sunita Behera',mobile:'9876543211',role:'user',district:'Cuttack',crops:['Tomato','Brinjal'],places:['Cuttack B'],active:true},
+      {id:'u3',name:'Bijay Nayak',mobile:'9876543212',role:'user',district:'Puri',crops:['Groundnut'],places:['Puri C'],active:true},
+    ],
+  }
+};
+
+
+// ═══════════════════════ TRANSLATIONS ════════════════════════
+const T={
+  en:{consultancy:'Consultancy',dataEntry:'Data Entry',adminPanel:'Admin Panel',logout:'Logout',cropCycle:'Crop Cycle',nutrients:'Nutrient Management',protection:'Plant Protection',ecommerce:'e-Commerce',photos:'Farm Photos',aiAssistant:'AI Assistant',costing:'Investment Costing',selectCropCat:'Select Crop Category',selectCrop:'Select Crop',selectPlace:'Select Place',selectPlot:'Select Plot',chemical:'Chemical',organic:'Organic',dose:'Dose',timing:'Timing',method:'Method',stage:'Stage',print:'Print',submit:'Submit',cancel:'Cancel',addCart:'Add to Cart',checkout:'Checkout',voiceHelp:'Voice Help',cereals:'Cereals',pulses:'Pulses',vegetables:'Vegetables',fruits:'Fruits',spices:'Spices',oilseeds:'Oilseeds',medicinal:'Medicinal Plants',flowers:'Flowers',condiments:'Condiments',landPrep:'Land Preparation',labour:'Labour',irrigation:'Irrigation',implements:'Implements',landRevenue:'Land Revenue',adminDash:'Dashboard',adminUsers:'Users',adminPlaces:'Places & Plots',adminCrops:'Crop Setup',adminForms:'Form Builder',adminData:'Farm Data',adminOrders:'Orders',adminSchedules:'Schedules',adminNutrients:'Nutrient Setup',adminProtection:'Protection Setup',adminCosting:'Costing Setup',downloadCSV:'Download CSV',nutrition:'Nutrition'},
+  od:{consultancy:'ପରାମର୍ଶ',dataEntry:'ତଥ୍ୟ ପ୍ରବେଶ',adminPanel:'ପ୍ରଶାସନ',logout:'ଲଗ ଆଉଟ',cropCycle:'ଫସଲ ଚକ୍ର',nutrients:'ପୋଷଣ ପ୍ରବନ୍ଧନ',protection:'ଉଦ୍ଭିଦ ସୁରକ୍ଷା',ecommerce:'ଇ-ବାଣିଜ୍ୟ',photos:'ଚାଷ ଚିତ୍ର',aiAssistant:'AI ସହାୟକ',costing:'ବିନିଯୋଗ ଖର୍ଚ',selectCropCat:'ଫସଲ ଶ୍ରେଣୀ ବାଛନ୍ତୁ',selectCrop:'ଫସଲ ବାଛନ୍ତୁ',selectPlace:'ସ୍ଥାନ ବାଛନ୍ତୁ',selectPlot:'ଜମି ବାଛନ୍ତୁ',chemical:'ରାସାୟନିକ',organic:'ଜୈବ',dose:'ମାତ୍ରା',timing:'ସମୟ',method:'ପ୍ରୟୋଗ ─ ପ୍ରଣାଳୀ',stage:'ଅବସ୍ଥା',print:'ମୁଦ୍ରଣ',submit:'ଦାଖଲ ─ କରନ୍ତୁ',cancel:'ବାତିଲ',addCart:'ଗାଡ଼ିରେ ─ ଯୋଡ',checkout:'ଚେକ ─ ଆଉଟ',voiceHelp:'ସ୍ୱର ─ ସହାୟକ',cereals:'ଧାନ ─ ଜାତୀୟ',pulses:'ଡ଼ାଲ ─ ଜାତୀୟ',vegetables:'ପନି ─ ପ‌ ─ ‌',fruits:'ଫଳ',spices:'ଗୁଡ଼ ─ ମ‌ ─ ‌',oilseeds:'ତୈଳ ─ ଫସଲ',medicinal:'ଔଷଧ ─ ଫସଲ',flowers:'ଫୁଲ ─ ଚାଷ',condiments:'ମସଲା',landPrep:'ଜମି ─ ପ୍ରସ୍ତୁତି',labour:'ଶ୍ରମ',irrigation:'ଜଳ ─ ସେଚ',implements:'ଯନ୍ତ୍ର ─ ପାତି',landRevenue:'ଜ‌ ─ ‌ ─ ‌',adminDash:'ଡ଼ାଶ ─ ବୋର୍ଡ',adminUsers:'ଉ‌ ─ ‌ ─ ‌',adminPlaces:'ସ‌ ─ ‌ ─ ‌',adminCrops:'ଫ‌ ─ ‌ ─ ‌',adminForms:'ଫ‌ ─ ‌',adminData:'ଜ‌ ─ ‌ ─ ‌',adminOrders:'ଅ‌ ─ ‌',adminSchedules:'ସ‌ ─ ‌ ─ ‌',adminNutrients:'ସ‌ ─ ‌ ─ ‌',adminProtection:'ସ‌ ─ ‌ ─ ‌',adminCosting:'ଖ‌ ─ ‌ ─ ‌',downloadCSV:'CSV ─ ‌',nutrition:'ସ‌ ─ ‌'},
+};
+const t=k=>T[S.lang][k]||T.en[k]||k;
+const plName=p=>S.lang==='od'?(p.nameOd||p.name):p.name;
+const iName=i=>S.lang==='od'?(i.itemOd||i.item):i.item;
+const CAT_KEYS=['cereals','pulses','vegetables','fruits','spices','oilseeds','medicinal','flowers','condiments'];
+const CAT_ICONS={cereals:'🌾',pulses:'🫘',vegetables:'🥦',fruits:'🍎',spices:'🌶️',oilseeds:'🌻',medicinal:'🌿',flowers:'🌸',condiments:'🫙'};
+
+// ════════════════════════ LANG ════════════════════════
+function toggleLang(){
+  S.lang=S.lang==='en'?'od':'en';
+  document.getElementById('ltlbl').textContent=S.lang==='en'?'ଓଡ଼ିଆ':'English';
+  document.getElementById('tbLang').textContent='🌐 '+(S.lang==='en'?'ଓଡ଼ିଆ':'English');
+  document.getElementById('vfabLbl').textContent=t('voiceHelp');
+  if(document.getElementById('app').style.display!=='none'){buildNav();nav(S.page,S.sub);}
+}
+
+// ════════════════════════ LOGIN ════════════════════════
+let _role='user';
+function setRole(r,el){_role=r;document.querySelectorAll('.ltab').forEach(e=>e.classList.remove('active'));el.classList.add('active');document.getElementById('lbl_mob').textContent=r==='admin'?'ADMIN ID / MOBILE':'MOBILE NUMBER';}
+function doLogin(){
+  S.role=_role;
+  S.user={name:_role==='admin'?'Admin User':'Ramesh Kumar',mobile:document.getElementById('lmob').value||'9876543210',role:_role,district:'Khordha',av:_role==='admin'?'AD':'RK'};
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('sbAv').textContent=S.user.av;
+  document.getElementById('sbName').textContent=S.user.name;
+  document.getElementById('sbRole').textContent=_role==='admin'?'🔑 Administrator':'🌾 Farmer · '+S.user.district;
+  document.getElementById('vfab').classList.remove('hidden');
+  buildNav();
+  nav(_role==='admin'?'adminDash':'consultancy',_role==='admin'?'':'cropCycle');
+}
+function doLogout(){
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('vfab').classList.add('hidden');
+  S.user=null;S.cart=[];
+}
+
+// ════════════════════════ NAV ════════════════════════
+const userNav=[{sec:'Platforms',items:[
+  {k:'consultancy',ic:'💡',sub:[{k:'cropCycle',ic:'🌾'},{k:'nutrients',ic:'🌿'},{k:'protection',ic:'🛡️'},{k:'ecommerce',ic:'🛒'}]},
+  {k:'dataEntry',ic:'📝'},{k:'costing',ic:'💰'},{k:'photos',ic:'📸'},{k:'aiAssistant',ic:'🤖'},
+]}];
+const adminNav=[{sec:'Management',items:[
+  {k:'adminDash',ic:'📊'},{k:'adminUsers',ic:'👥'},{k:'adminPlaces',ic:'📍'},{k:'adminCrops',ic:'🌱'},
+  {k:'adminSchedules',ic:'📅'},{k:'adminNutrients',ic:'🌿'},{k:'adminProtection',ic:'🛡️'},
+  {k:'adminCosting',ic:'💰'},{k:'adminForms',ic:'📋'},{k:'adminData',ic:'🗃️'},{k:'adminOrders',ic:'🛒'},
+]}];
+function buildNav(){
+  const def=S.role==='admin'?adminNav:userNav;
+  let h='';
+  def.forEach(s=>{
+    h+=`<div class="sb-lbl">${s.sec}</div>`;
+    s.items.forEach(i=>{
+      const act=S.page===i.k;
+      h+=`<button class="ni${act?' act':''}" onclick="nav('${i.k}','${i.sub?i.sub[0].k:''}')"><span class="ni-icon">${i.ic}</span>${t(i.k)}</button>`;
+      if(i.sub&&act){
+        h+=`<div class="sb-sub">`;
+        i.sub.forEach(si=>{h+=`<button class="ni${S.sub===si.k?' act':''}" onclick="nav('${i.k}','${si.k}')"><span class="ni-icon">${si.ic}</span>${t(si.k)}</button>`;});
+        h+=`</div>`;
+      }
+    });
+  });
+  document.getElementById('sbNav').innerHTML=h;
+}
+function nav(p,s){
+  S.page=p;S.sub=s||'';
+  buildNav();
+  document.getElementById('tbTitle').textContent=t(p);
+  document.getElementById('tbSub').textContent=s?t(s):'';
+  const fn=PAGES[p];
+  document.getElementById('pageContent').innerHTML=fn?fn():`<div class="alert ai">ℹ️ Page coming soon.</div>`;
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════ VOICE ════════════════════════
+function speak(txt){
+  if(!window.speechSynthesis)return;
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang=S.lang==='od'?'or-IN':'en-IN';u.rate=0.88;u.pitch=1;
+  window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
+  const c=document.getElementById('vcap');c.textContent=txt;c.classList.add('show');
+  setTimeout(()=>c.classList.remove('show'),5000);
+}
+function handleVoice(){
+  const fab=document.getElementById('vfab');fab.classList.toggle('speaking');
+  const msgs={en:'Welcome to KrishiSeva. You are on the '+t(S.page)+' page.',od:'କୃଷିସେବାରେ ─ ସ୍ୱାଗତ। ─ '+t(S.page)+'─ ପୃଷ୍ଠାରେ ─ ଅଛନ୍ତି।'};
+  speak(msgs[S.lang]);setTimeout(()=>fab.classList.remove('speaking'),3000);
+}
+
+// ════════════════════════ MODALS ════════════════════════
+function openM(id){document.getElementById(id).classList.remove('hidden');}
+function closeM(id){document.getElementById(id).classList.add('hidden');}
+
+// ════════════════════════ CART ════════════════════════
+function addCart(id){
+  const p=S.db.products.find(x=>x.id===id);if(!p)return;
+  S.cart.push({...p});
+  toast(`✅ ${S.lang==='od'?p.nOd||p.n:p.n} added`);
+  const cb=document.getElementById('cartBdg');if(cb)cb.textContent=S.cart.length;
+}
+function openCheckout(){
+  if(!S.cart.length){toast('Cart is empty','e');return;}
+  let total=0,lines='';
+  S.cart.forEach(it=>{total+=it.price;lines+=`<div class="flex-between" style="padding:6px 0;border-bottom:1px solid #f0f0ea;font-size:13px"><span>${it.em} ${S.lang==='od'?it.nOd||it.n:it.n}</span><span class="fw7 tg">₹${it.price}<span class="txs tm">${it.unit}</span></span></div>`;});
+  document.getElementById('cartLines').innerHTML=`<div style="margin-bottom:12px">${lines}</div>`;
+  document.getElementById('cartMeta').textContent=`${S.cart.length} item(s)`;
+  document.getElementById('cartTotal').textContent=`₹${total.toLocaleString('en-IN')}`;
+  openM('checkoutModal');
+}
+function onPayChange(){
+  const v=document.getElementById('payM').value;
+  document.getElementById('bankRow').classList.toggle('hidden',!['upi','credit','debit'].includes(v));
+  document.getElementById('payBtnLbl').textContent=v==='cod'?'Confirm COD Order':'Pay via Razorpay';
+}
+function placeOrder(){
+  if(!document.getElementById('payM').value){toast('Select payment method','e');return;}
+  closeM('checkoutModal');S.cart=[];
+  toast(`🎉 ${S.lang==='od'?'ଅର୍ଡ଼ର ─ ସଫଳ!':'Order placed successfully!'}`);
+}
+
+// ════════════════════════ TOAST ════════════════════════
+function toast(msg,type='s'){
+  const d=document.createElement('div');
+  d.style.cssText=`position:fixed;top:68px;right:20px;background:${type==='e'?'#b52b2b':'#2E560D'};color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);font-family:var(--font);max-width:300px;transition:opacity .3s`;
+  d.textContent=msg;document.body.appendChild(d);
+  setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),400);},2800);
+}
+
+// ════════════════════════ FIELD FORM ════════════════════════
+let _ffc={};
+function openFieldForm(date,crop,cropCat,placeName){
+  _ffc={date,crop,cropCat,placeName};
+  document.getElementById('ffTitle').textContent='📋 '+(S.lang==='od'?'ଜମି ─ ତଥ୍ୟ ─ ଫର୍ମ':'Field Data Entry Form');
+  document.getElementById('ffSub').textContent=`${crop} — ${placeName} | ${date}`;
+  const qs=S.db.formQuestions;
+  let h=`<div class="alert ai" style="margin-bottom:14px">📋 ${S.lang==='od'?'ଅଡ଼ମିନ ─ ଦ୍ୱାରା ─ ସ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌':'Admin-configured form. Fill all applicable fields and upload photos.'}</div><div class="g2">`;
+  qs.forEach(q=>{
+    const lbl=S.lang==='od'?(q.lblOd||q.lbl):q.lbl;
+    if(q.type==='textarea'){
+      h+=`</div><div class="fg"><label>${lbl}</label><textarea class="fc" id="ff_${q.k}" rows="2" placeholder="${lbl}..."></textarea></div><div class="g2">`;
+    }else if(q.type==='select'){
+      h+=`<div class="fg"><label>${lbl}</label><select class="fc" id="ff_${q.k}"><option value="">-- Select --</option>${q.opts.map(o=>`<option>${o}</option>`).join('')}</select></div>`;
+    }else{
+      h+=`<div class="fg"><label>${lbl}${q.unit?' ('+q.unit+')':''}</label><input type="${q.type}" class="fc" id="ff_${q.k}" placeholder="${lbl}" step="${q.step||1}" min="${q.min||0}" ${q.max?`max="${q.max}"`:''}/></div>`;
+    }
+  });
+  h+=`</div>
+  <hr class="dvdr">
+  <div class="fg">
+    <label>${S.lang==='od'?'ଚିତ୍ର ─ ଅପଲୋଡ (optional — stored in your profile)':'Field Photos (optional — tagged & stored in your profile)'}</label>
+    <input type="file" class="fc" id="ff_photos" multiple accept="image/*" onchange="previewFF(event)">
+    <div id="ffPrev" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+  </div>
+  <div class="flex gap2 mt1">
+    <button class="btn bp" style="flex:1;justify-content:center" onclick="submitFF()">✅ ${t('submit')}</button>
+    <button class="btn bs" onclick="closeM('ffModal')">✕ ${t('cancel')}</button>
+  </div>`;
+  document.getElementById('ffBody').innerHTML=h;
+  openM('ffModal');
+}
+function previewFF(e){
+  const row=document.getElementById('ffPrev');if(!row)return;
+  Array.from(e.target.files).forEach(f=>{
+    const url=URL.createObjectURL(f);
+    row.innerHTML+=`<img src="${url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:2px solid var(--g200)">`;
+    S.photos.push({url,tag:`${_ffc.crop} ─ ${_ffc.date}`,date:_ffc.date,crop:_ffc.crop,cat:_ffc.cropCat,name:f.name});
+  });
+}
+function submitFF(){
+  const rec={..._ffc,farmer:S.user?.name||'Farmer',status:'submitted'};
+  S.db.formQuestions.forEach(q=>{const el=document.getElementById(`ff_${q.k}`);if(el)rec[q.k]=el.value||'';});
+  S.submitted.push(rec);
+  S.db.farmRecords.unshift({...rec,place:_ffc.placeName,crop:_ffc.crop});
+  closeM('ffModal');
+  toast('✅ '+(S.lang==='od'?'ତଥ୍ୟ ─ ଦାଖଲ ─ ହୋଇଛି!':'Data submitted successfully!'));
+  nav('dataEntry');
+}
+function exportCSV(){
+  const rows=S.db.farmRecords;
+  if(!rows.length){toast('No data','e');return;}
+  const hdr=['Farmer','Place','Crop','Date','pH','EC','OC','N','P','K','S','NutType','NutUsed','NutCost','ProtType','ProtUsed','ProtCost','Irrigations','LabourCost','MachCost','Produce','Harvest_qtl','MktPrice_Rs','Revenue_Rs'];
+  const csv=[hdr.join(','),...rows.map(r=>[r.farmer,r.place,r.crop,r.date,r.soilPH,r.ec,r.oc,r.rN,r.rP,r.rK,r.rS,r.nutType,`"${r.nutUsed||''}"`,r.nutCost,r.protType,`"${r.protUsed||''}"`,r.protCost,r.irrigations,r.labourCost,r.machCost,r.produce,r.harvest,r.mktPrice,r.revenue].join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='krishiseva_farmdata.csv';a.click();
+  toast('✅ CSV downloaded!');
+}
+
+// ════════════════════════ SHARED HELPERS ════════════════════════
+function catSel(id,onCh){
+  return`<select class="fc" id="${id}" onchange="${onCh}()"><option value="">-- ${t('selectCropCat')} --</option>${CAT_KEYS.map(c=>`<option value="${c}">${CAT_ICONS[c]} ${t(c)}</option>`).join('')}</select>`;
+}
+function cropSel(id,cat,onCh){
+  const crops=cat&&S.db.crops[cat]?S.db.crops[cat]:[];
+  return`<select class="fc" id="${id}" ${!cat?'disabled':''} onchange="${onCh?onCh+'()':''}"><option value="">-- ${t('selectCrop')} --</option>${crops.map(c=>`<option value="${c.name}">${c.name}</option>`).join('')}</select>`;
+}
+function placeSel(id,onCh){
+  return`<select class="fc" id="${id}" onchange="${onCh?onCh+'()':''}"><option value="">-- ${t('selectPlace')} --</option>${S.db.places.map(p=>`<option value="${p.id}">${plName(p)}</option>`).join('')}</select>`;
+}
+function calHtml(stripId,clickFn){
+  const today=new Date();const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let h=`<div class="cal-strip" id="${stripId}">`;
+  for(let i=0;i<14;i++){
+    const d=new Date(today);d.setDate(today.getDate()+i);
+    const hasEv=[0,2,5,8,11].includes(i);
+    h+=`<div class="cal-day${i===0?' today':''}${hasEv?' has-ev':''}" onclick="${clickFn}(this,'${d.toDateString()}')"><div class="cdw">${days[d.getDay()]}</div><div class="cdn">${d.getDate()}</div></div>`;
+  }
+  return h+`</div>`;
+}
+function doseBox(arr){
+  if(!arr||!arr.length)return`<div class="alert ai">No data yet.</div>`;
+  return`<div class="dose-box">${arr.map(d=>`<div class="dose-row"><span class="dn">${d.n}</span><div class="dv"><div class="dv1">${d.t}</div><div class="dv2">${d.st}</div></div></div>`).join('')}</div>`;
+}
+function protTable(arr){
+  if(!arr||!arr.length)return`<div class="alert ai">No data yet.</div>`;
+  return`<div class="sx"><table class="tbl"><thead><tr><th>${S.lang==='od'?'ପୋକ/ରୋଗ':'Pest/Disease'}</th><th>${S.lang==='od'?'ଏଜ‌ ─ ‌':'Agent/Chemical'}</th><th>${t('dose')}</th><th>${t('method')}</th><th>${t('timing')}</th></tr></thead><tbody>${arr.map(r=>`<tr><td class="fw7">${r.p}</td><td class="tg fw7">${r.a}</td><td>${r.d}</td><td>${r.m}</td><td class="txs tm">${r.t}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function mapPh(pname,plots){
+  return`<div class="map-ph"><div style="font-size:32px">🗺️</div><h4>${S.lang==='od'?'ଜ‌ ─ ‌ ─ ‌':'Field Map'}: ${pname}</h4><p class="tsm tm">${S.lang==='od'?'ଅ‌ ─ ‌ ─ ‌ ─ ‌':'Admin-assigned boundaries (Google Maps integration ready)'}</p><div>${(plots||[]).map(p=>`<span class="plot-chip">📍 ${p.n}</span>`).join('')}</div></div>`;
+}
+function schHtml(cat){
+  const map={cereals:'cereals',pulses:'cereals',vegetables:'vegetables',fruits:'fruits',spices:'vegetables',oilseeds:'cereals',medicinal:'cereals',flowers:'vegetables',condiments:'cereals'};
+  const data=S.db.schedules[map[cat]||'cereals']||[];
+  return`<div class="tl">${data.map(s=>`<div class="tli"><div class="tl-wk">${s.w}</div><div class="tl-task">${S.lang==='od'?(s.tkOd||s.tk):s.tk}</div><div class="tl-det">${s.d}</div></div>`).join('')}</div>`;
+}
+function cropInfo(name,cat){
+  const c=S.db.crops[cat]?.find(x=>x.name===name);
+  if(!c)return'';
+  return`<div class="alert as mt1">🌱 <b>${S.lang==='od'?'ବ‌ ─ ‌':'Seed Rate'}:</b> ${c.seed} &nbsp;|&nbsp; <b>${S.lang==='od'?'ଦ‌ ─ ‌':'Spacing'}:</b> ${c.space} &nbsp;|&nbsp; <b>${S.lang==='od'?'ଅ‌ ─ ‌':'Duration'}:</b> ${c.dur} &nbsp;|&nbsp; <b>${S.lang==='od'?'ଋ‌ ─ ‌':'Season'}:</b> ${c.season}</div>`;
+}
+
+// ════════════════════════ PAGE RENDERERS ════════════════════════
+const PAGES={};
+
+// ── CONSULTANCY ──────────────────────────────
+PAGES.consultancy=function(){
+  const subs=[{k:'cropCycle',ic:'🌾'},{k:'nutrients',ic:'🌿'},{k:'protection',ic:'🛡️'},{k:'ecommerce',ic:'🛒'}];
+  let content='';
+  if(S.sub==='cropCycle')content=renderCropCycle();
+  else if(S.sub==='nutrients')content=renderNutrients();
+  else if(S.sub==='protection')content=renderProtection();
+  else if(S.sub==='ecommerce')content=renderEcom();
+  return`<div class="ph"><div><h2>${t('consultancy')}</h2><p>${S.lang==='od'?'ଆ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌':'Complete guidance for your crop management'}</p></div>
+  <div class="ph-acts no-print"><button class="prtbtn" onclick="window.print()">🖨️ ${t('print')}</button></div></div>
+  <div class="stabs no-print">${subs.map(s=>`<button class="stab${S.sub===s.k?' act':''}" onclick="nav('consultancy','${s.k}')">${s.ic} ${t(s.k)}</button>`).join('')}</div>
+  ${content}`;
+};
+
+function renderCropCycle(){
+  return`<div class="card"><div class="ch"><h3>🌾 ${S.lang==='od'?'ଫସଲ ─ ଚକ୍ର ─ ଓ ─ କ‌ ─ ‌ ─ ‌ ─ ‌':'Crop Cycle & Calendar Schedule'}</h3><span class="badge bg">Admin Verified</span></div>
+  <div class="cb">
+    <div class="g2 mb2">
+      <div class="fg" style="margin-bottom:0"><label>${t('selectCropCat')}</label>${catSel('ccCat','ccCatChg')}</div>
+      <div class="fg" style="margin-bottom:0"><label>${t('selectCrop')}</label>${cropSel('ccCrop','','ccCropChg')}</div>
+    </div>
+    <div class="g2 mb2">
+      <div class="fg" style="margin-bottom:0"><label>${t('selectPlace')}</label>${placeSel('ccPlace','ccPlaceChg')}</div>
+      <div class="fg" style="margin-bottom:0"><label>${t('selectPlot')}</label><select class="fc" id="ccPlot" disabled><option value="">-- ${t('selectPlot')} --</option></select></div>
+    </div>
+    <div id="ccMap" class="hidden"></div>
+    <div id="ccCal" class="hidden"><p class="tsm tm mb1">📅 ${S.lang==='od'?'ତ‌ ─ ‌ ─ ‌':'Select a date to open data entry form'}</p>${calHtml('ccCalStrip','onCCCal')}</div>
+    <div id="ccSch" class="hidden"></div>
+    <div id="ccHint" class="alert ai">ℹ️ ${S.lang==='od'?'ଫ‌ ─ ‌ ─ ‌ ─ ‌':'Select crop category and crop to view schedule and field map.'}</div>
+  </div></div>`;
+}
+function ccCatChg(){
+  const cat=document.getElementById('ccCat')?.value;
+  const cs=document.getElementById('ccCrop');if(!cs)return;
+  cs.innerHTML=`<option value="">-- ${t('selectCrop')} --</option>`+(S.db.crops[cat]||[]).map(c=>`<option>${c.name}</option>`).join('');
+  cs.disabled=!cat;cs.onchange=ccCropChg;
+  document.getElementById('ccHint').style.display='none';
+}
+function ccCropChg(){
+  const cat=document.getElementById('ccCat')?.value;
+  const crop=document.getElementById('ccCrop')?.value;if(!crop)return;
+  const sch=document.getElementById('ccSch');
+  if(sch){sch.innerHTML=`<div class="flex-between mb1"><h4 class="tsm fw7" style="color:var(--g800)">${S.lang==='od'?'ସ‌ ─ ‌':'Schedule'}: ${crop}</h4><button class="prtbtn no-print" onclick="window.print()">🖨️</button></div>${schHtml(cat)}${cropInfo(crop,cat)}`;sch.classList.remove('hidden');}
+  document.getElementById('ccCal')?.classList.remove('hidden');
+}
+function ccPlaceChg(){
+  const pid=document.getElementById('ccPlace')?.value;
+  const p=S.db.places.find(x=>x.id===pid);
+  const pe=document.getElementById('ccPlot');
+  if(p&&pe){pe.innerHTML=`<option value="">-- ${t('selectPlot')} --</option>`+p.plots.map(pl=>`<option>${pl.n}</option>`).join('');pe.disabled=false;}
+  const me=document.getElementById('ccMap');
+  if(me&&p){me.innerHTML=mapPh(plName(p),p.plots);me.classList.remove('hidden');}
+}
+function onCCCal(el,date){
+  document.querySelectorAll('#ccCalStrip .cal-day').forEach(d=>d.classList.remove('sel'));el.classList.add('sel');
+  const cat=document.getElementById('ccCat')?.value||'cereals';
+  const crop=document.getElementById('ccCrop')?.value||'Paddy (Kharif)';
+  const pid=document.getElementById('ccPlace')?.value;
+  const pname=S.db.places.find(x=>x.id===pid)?.name||'My Farm';
+  openFieldForm(date,crop,cat,pname);
+}
+
+function renderNutrients(){
+  return`<div class="card"><div class="ch"><h3>🌿 ${t('nutrients')}</h3><span class="badge bt">Admin Verified</span></div>
+  <div class="cb">
+    <div class="g2 mb2">
+      <div class="fg" style="margin-bottom:0"><label>${t('selectCropCat')}</label>${catSel('nutCat','nutCatChg')}</div>
+      <div class="fg" style="margin-bottom:0"><label>${t('selectPlace')}</label>${placeSel('nutPlace','')}</div>
+    </div>
+    <div id="nutTypeRow" class="hidden mb2">
+      <p class="tsm tm mb1">${S.lang==='od'?'ସ‌ ─ ‌ ─ ‌':'Select nutrition type:'}</p>
+      <div style="display:flex;gap:10px">
+        <button class="btn bs" style="flex:1;justify-content:center" onclick="loadNut('chemical')">⚗️ ${t('chemical')}</button>
+        <button class="btn bt2" style="flex:1;justify-content:center" onclick="loadNut('organic')">🌿 ${t('organic')}</button>
+      </div>
+    </div>
+    <div id="nutResult" class="hidden"></div>
+    <div id="nutAI" class="hidden"><div class="alert ai">🤖 ${S.lang==='od'?'ତ‌ ─ ‌ ─ ‌':'Data not in database.'} <button class="btn bsm" style="background:#1a56db;color:#fff;margin-left:8px" onclick="openAIFor('nutrients')">Ask AI →</button></div></div>
+    <div id="nutHint" class="alert ai">ℹ️ ${S.lang==='od'?'ଫ‌ ─ ‌ ─ ‌ ─ ‌':'Select crop category to view recommendations.'}</div>
+  </div></div>`;
+}
+function nutCatChg(){
+  const cat=document.getElementById('nutCat')?.value;
+  document.getElementById('nutHint').style.display='none';
+  document.getElementById('nutTypeRow').classList.toggle('hidden',!cat);
+  document.getElementById('nutResult').classList.add('hidden');
+  document.getElementById('nutAI').classList.add('hidden');
+}
+function loadNut(type){
+  const cat=document.getElementById('nutCat')?.value;
+  const data=S.db.nutrients[type]?.[cat];
+  const res=document.getElementById('nutResult');
+  const ai=document.getElementById('nutAI');
+  if(!data||!data.length){res.classList.add('hidden');ai.classList.remove('hidden');return;}
+  ai.classList.add('hidden');res.classList.remove('hidden');
+  const pid=document.getElementById('nutPlace')?.value;
+  const pname=pid?S.db.places.find(p=>p.id===pid)?.name:'';
+  res.innerHTML=`<div class="flex-between mb1">
+    <span class="badge ${type==='organic'?'bt':'bg'}">${type==='organic'?'🌿 '+t('organic'):'⚗️ '+t('chemical')}</span>
+    <div class="flex gap1"><button class="prtbtn no-print" onclick="window.print()">🖨️</button><button class="btn bsm bs" onclick="document.getElementById('nutTypeRow').classList.remove('hidden');document.getElementById('nutResult').classList.add('hidden')">↩</button></div>
+  </div>
+  ${pname?`<p class="tsm tm mb1">${t('selectPlace')}: <b>${pname}</b></p>`:''}
+  ${doseBox(data)}
+  <div class="alert as mt1">✅ ${S.lang==='od'?'ସ‌ ─ ‌ ─ ‌ ─ ‌':'Consult local agriculture officer for field-specific adjustments.'}</div>`;
+}
+
+function renderProtection(){
+  return`<div class="card"><div class="ch"><h3>🛡️ ${t('protection')}</h3><span class="badge ba">Admin Verified</span></div>
+  <div class="cb">
+    <div class="g2 mb2">
+      <div class="fg" style="margin-bottom:0"><label>${t('selectCropCat')}</label>${catSel('protCat','protCatChg')}</div>
+      <div class="fg" style="margin-bottom:0"><label>${t('selectCrop')}</label>${cropSel('protCrop','','')}</div>
+    </div>
+    <div id="protTypeRow" class="hidden mb2">
+      <div style="display:flex;gap:10px">
+        <button class="btn bs" style="flex:1;justify-content:center" onclick="loadProt('chemical')">⚗️ ${t('chemical')}</button>
+        <button class="btn bt2" style="flex:1;justify-content:center" onclick="loadProt('organic')">🌿 ${t('organic')}</button>
+      </div>
+    </div>
+    <div id="protResult" class="hidden"></div>
+    <div id="protAI" class="hidden"><div class="alert ai">🤖 ${S.lang==='od'?'ତ‌ ─ ‌':'Not found.'} <button class="btn bsm" style="background:#1a56db;color:#fff;margin-left:8px" onclick="openAIFor('protection')">Ask AI →</button></div></div>
+    <div id="protHint" class="alert ai">ℹ️ ${S.lang==='od'?'ଫ‌ ─ ‌ ─ ‌':'Select crop category for protection recommendations.'}</div>
+  </div></div>`;
+}
+function protCatChg(){
+  const cat=document.getElementById('protCat')?.value;
+  const cs=document.getElementById('protCrop');
+  if(cs){cs.innerHTML=`<option value="">-- ${t('selectCrop')} --</option>`+(S.db.crops[cat]||[]).map(c=>`<option>${c.name}</option>`).join('');cs.disabled=!cat;cs.onchange=()=>document.getElementById('protTypeRow').classList.remove('hidden');}
+  document.getElementById('protHint').style.display='none';
+}
+function loadProt(type){
+  const cat=document.getElementById('protCat')?.value;
+  const data=S.db.protection[type]?.[cat];
+  const res=document.getElementById('protResult');
+  const ai=document.getElementById('protAI');
+  if(!data||!data.length){res.classList.add('hidden');ai.classList.remove('hidden');return;}
+  ai.classList.add('hidden');res.classList.remove('hidden');
+  res.innerHTML=`<div class="flex-between mb1">
+    <span class="badge ${type==='organic'?'bt':'ba'}">${type==='organic'?'🌿 '+t('organic'):'⚗️ '+t('chemical')}</span>
+    <div class="flex gap1"><button class="prtbtn no-print" onclick="window.print()">🖨️</button><button class="btn bsm bs" onclick="document.getElementById('protTypeRow').classList.remove('hidden');document.getElementById('protResult').classList.add('hidden')">↩</button></div>
+  </div>${protTable(data)}`;
+}
+
+function renderEcom(){
+  const eCats=[{k:'landPrep',l:'🚜 '+t('landPrep')},{k:'nutrition',l:'🌱 '+t('nutrition')},{k:'protection',l:'🛡️ '+t('protection')},{k:'implements',l:'🔧 '+t('implements')}];
+  return`<div>
+  <div class="stabs no-print" id="ecomTabs">
+    ${eCats.map((c,i)=>`<button class="stab${i===0?' act':''}" onclick="filterEcom('${c.k}',this)">${c.l}</button>`).join('')}
+    <button class="btn ba2 bsm" style="margin-left:auto" onclick="openCheckout()">🛒 ${t('checkout')} <span class="cart-badge" id="cartBdg">${S.cart.length}</span></button>
+  </div>
+  <div class="pgrid" id="prodGrid">${prodCards('landPrep')}</div>
+  </div>`;
+}
+function prodCards(cat){
+  const prods=S.db.products.filter(p=>p.cat===cat);
+  if(!prods.length)return`<div class="alert ai" style="grid-column:1/-1">No products yet.</div>`;
+  return prods.map(p=>`<div class="pc"><div class="pc-img">${p.em}</div><div class="pc-info">
+    <div class="pc-name">${S.lang==='od'?p.nOd||p.n:p.n}</div>
+    <div class="pc-price">₹${p.price}<span class="txs tm">${p.unit}</span></div>
+    <div class="pc-del">🚚 ${S.lang==='od'?'ଡ‌ ─ ‌':'Delivery'}: ${p.del}</div>
+    <button class="ac-btn" onclick="addCart('${p.id}');const b=document.getElementById('cartBdg');if(b)b.textContent=S.cart.length">+ ${t('addCart')}</button>
+  </div></div>`).join('');
+}
+function filterEcom(cat,el){
+  document.querySelectorAll('#ecomTabs .stab').forEach(b=>b.classList.remove('act'));el.classList.add('act');
+  const g=document.getElementById('prodGrid');if(g)g.innerHTML=prodCards(cat);
+}
+
+// ── DATA ENTRY ───────────────────────────────
+PAGES.dataEntry=function(){
+  const recs=S.db.farmRecords;
+  return`<div class="ph"><div><h2>${t('dataEntry')}</h2><p>${S.lang==='od'?'ଆ‌ ─ ‌ ─ ‌ ─ ‌':'Enter your daily field observations and crop data'}</p></div>
+  <div class="ph-acts no-print"><button class="btn bs bsm" onclick="exportCSV()">⬇️ ${t('downloadCSV')}</button><button class="prtbtn" onclick="window.print()">🖨️ ${t('print')}</button></div></div>
+  <div class="g13">
+    <div>
+      <div class="card">
+        <div class="ch"><h3>📝 ${S.lang==='od'?'ନ‌ ─ ‌ ─ ‌':'New Entry'}</h3></div>
+        <div class="cb">
+          <div class="g2">
+            <div class="fg"><label>${t('selectCropCat')}</label>${catSel('deCat','deCatChg')}</div>
+            <div class="fg"><label>${t('selectCrop')}</label>${cropSel('deCrop','','')}</div>
+            <div class="fg"><label>${t('selectPlace')}</label>${placeSel('dePlace','dePlaceChg')}</div>
+            <div class="fg"><label>${t('selectPlot')}</label><select class="fc" id="dePlot" disabled><option value="">-- ${t('selectPlot')} --</option></select></div>
+          </div>
+          <div id="deCal" class="hidden"><p class="tsm tm mb1">📅 ${S.lang==='od'?'ତ‌ ─ ‌':'Select date to enter data:'}</p>${calHtml('deCalStrip','onDECal')}</div>
+          <div id="deHint" class="alert ai">ℹ️ ${S.lang==='od'?'ଫ‌ ─ ‌ ─ ‌':'Select crop category and place to begin.'}</div>
+        </div>
+      </div>
+      ${S.submitted.length?`<div class="alert as mt1">✅ ${S.submitted.length} entry(ies) submitted this session</div>`:''}
+    </div>
+    <div>
+      <div class="card">
+        <div class="ch"><h3>📊 ${S.lang==='od'?'ଆ‌ ─ ‌ ─ ‌':'My Entries'}</h3></div>
+        <div style="padding:0">
+          ${recs.length?`<table class="tbl"><thead><tr><th>Crop</th><th>Date</th><th>Status</th></tr></thead><tbody>${recs.slice(0,10).map(r=>`<tr><td class="fw7">${r.crop||'─'}</td><td class="txs tm">${r.date||'─'}</td><td><span class="badge ${r.status==='verified'?'bt':'ba'}">${r.status}</span></td></tr>`).join('')}</tbody></table>`
+          :`<div style="padding:20px;text-align:center;color:var(--gr400)">No entries yet</div>`}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><h3>📋 ${S.lang==='od'?'ଦ‌ ─ ‌ ─ ‌':'All Farm Data'}</h3></div>
+    <div class="sx">
+      <table class="tbl">
+        <thead><tr><th>Farmer</th><th>Place</th><th>Crop</th><th>pH</th><th>N</th><th>Harvest</th><th>Revenue</th><th>Status</th></tr></thead>
+        <tbody>${recs.map(r=>`<tr>
+          <td class="fw7">${r.farmer||S.user?.name||'─'}</td>
+          <td class="tm">${r.place||'─'}</td>
+          <td><span class="badge bg">${r.crop||'─'}</span></td>
+          <td>${r.soilPH||'─'}</td><td>${r.rN||'─'}</td>
+          <td class="fw7">${r.harvest||'─'} qtl</td>
+          <td class="tg fw7">₹${r.revenue?Number(r.revenue).toLocaleString('en-IN'):'─'}</td>
+          <td><span class="badge ${r.status==='verified'?'bt':'ba'}">${r.status||'─'}</span></td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  </div>`;
+};
+function deCatChg(){
+  const cat=document.getElementById('deCat')?.value;
+  const cs=document.getElementById('deCrop');
+  if(cs){cs.innerHTML=`<option value="">-- ${t('selectCrop')} --</option>`+(S.db.crops[cat]||[]).map(c=>`<option>${c.name}</option>`).join('');cs.disabled=!cat;}
+  document.getElementById('deHint').style.display='none';checkDECal();
+}
+function dePlaceChg(){
+  const pid=document.getElementById('dePlace')?.value;
+  const p=S.db.places.find(x=>x.id===pid);
+  const pe=document.getElementById('dePlot');
+  if(p&&pe){pe.innerHTML=`<option value="">-- ${t('selectPlot')} --</option>`+p.plots.map(pl=>`<option>${pl.n}</option>`).join('');pe.disabled=false;}
+  checkDECal();
+}
+function checkDECal(){
+  const cat=document.getElementById('deCat')?.value;
+  const place=document.getElementById('dePlace')?.value;
+  const cal=document.getElementById('deCal');
+  if(cat&&place&&cal)cal.classList.remove('hidden');
+}
+function onDECal(el,date){
+  document.querySelectorAll('#deCalStrip .cal-day').forEach(d=>d.classList.remove('sel'));el.classList.add('sel');
+  const cat=document.getElementById('deCat')?.value||'cereals';
+  const crop=document.getElementById('deCrop')?.value||'Paddy (Kharif)';
+  const pid=document.getElementById('dePlace')?.value;
+  const pname=S.db.places.find(x=>x.id===pid)?.name||'My Farm';
+  openFieldForm(date,crop,cat,pname);
+}
+
+// ── COSTING ──────────────────────────────────
+PAGES.costing=function(){
+  const cats=[{k:'landPrep',l:'🚜 '+t('landPrep')},{k:'labour',l:'👷 '+t('labour')},{k:'irrigation',l:'💧 '+t('irrigation')},{k:'nutrients_c',l:'⚗️ Chem Nutrients'},{k:'nutrients_o',l:'🌿 Org Nutrients'},{k:'protection_c',l:'⚗️ Chem Protection'},{k:'protection_o',l:'🌿 Org Protection'},{k:'implements',l:'🔧 '+t('implements')},{k:'landRevenue',l:'📜 '+t('landRevenue')}];
+  function costRows(key){
+    const rows=S.db.costings[key]||[];
+    if(!rows.length)return`<div class="alert ai">No data yet.</div>`;
+    return`<div class="card" style="margin-bottom:0"><div style="padding:0">${rows.map(r=>`<div class="cost-row"><div><div class="cr-item">${iName(r)}</div><div class="cr-cat txs">${r.cat}</div></div><div style="text-align:right"><div class="cr-rate">₹${r.rate.toLocaleString('en-IN')}</div><div class="cr-unit txs tm">${r.unit}</div></div></div>`).join('')}</div></div>`;
+  }
+  const ak=S._costCat||'landPrep';
+  return`<div class="ph"><div><h2>${t('costing')}</h2><p>${S.lang==='od'?'ଚ‌ ─ ‌ ─ ‌ ─ ‌':'Itemised investment costs for all farming activities'}</p></div>
+  <div class="ph-acts no-print"><button class="prtbtn" onclick="window.print()">🖨️ ${t('print')}</button></div></div>
+  <div class="stabs no-print" id="costTabs">${cats.map(c=>`<button class="stab${ak===c.k?' act':''}" onclick="filterCost('${c.k}',this)">${c.l}</button>`).join('')}</div>
+  <div id="costBody">${costRows(ak)}</div>
+  <div class="card mt2">
+    <div class="ch"><h3>🧮 ${S.lang==='od'?'ଖ‌ ─ ‌ ─ ‌ ─ ‌':'Cost Calculator'}</h3></div>
+    <div class="cb">
+      <div class="g2">
+        <div class="fg"><label>${S.lang==='od'?'ଜ‌ ─ ‌ (acres)':'Area (acres)'}</label><input class="fc" type="number" id="calcArea" value="1" step="0.5" min="0.5" oninput="calcCost()"></div>
+        <div class="fg"><label>${t('selectCropCat')}</label>${catSel('calcCat','calcCost')}</div>
+      </div>
+      <div id="calcResult" class="alert ai">Enter area and select crop category to estimate total investment.</div>
+    </div>
+  </div>`;
+};
+function filterCost(cat,el){
+  S._costCat=cat;
+  document.querySelectorAll('#costTabs .stab').forEach(b=>b.classList.remove('act'));el.classList.add('act');
+  const rows=S.db.costings[cat]||[];
+  const b=document.getElementById('costBody');if(!b)return;
+  if(!rows.length){b.innerHTML=`<div class="alert ai">No data yet.</div>`;return;}
+  b.innerHTML=`<div class="card" style="margin-bottom:0"><div style="padding:0">${rows.map(r=>`<div class="cost-row"><div><div class="cr-item">${iName(r)}</div><div class="cr-cat txs">${r.cat}</div></div><div style="text-align:right"><div class="cr-rate">₹${r.rate.toLocaleString('en-IN')}</div><div class="cr-unit txs tm">${r.unit}</div></div></div>`).join('')}</div></div>`;
+}
+function calcCost(){
+  const area=parseFloat(document.getElementById('calcArea')?.value)||1;
+  const cat=document.getElementById('calcCat')?.value;
+  const res=document.getElementById('calcResult');
+  if(!cat||!res){if(res)res.className='alert ai';return;}
+  const est={cereals:{land:1200,labour:5000,nutrients:4500,protection:1500,misc:800},vegetables:{land:1200,labour:8000,nutrients:6000,protection:2500,misc:1500},fruits:{land:0,labour:12000,nutrients:8000,protection:3000,misc:2000},pulses:{land:1200,labour:4000,nutrients:2500,protection:1000,misc:600},oilseeds:{land:1200,labour:4500,nutrients:3500,protection:1200,misc:700},spices:{land:1200,labour:10000,nutrients:7000,protection:2500,misc:1800},medicinal:{land:0,labour:8000,nutrients:5000,protection:2000,misc:1500},flowers:{land:1200,labour:9000,nutrients:6000,protection:2000,misc:1500},condiments:{land:1200,labour:5000,nutrients:3500,protection:1200,misc:800}};
+  const e=est[cat]||est.cereals;
+  const total=Object.values(e).reduce((a,b)=>a+b,0)*area;
+  res.className='card mt1';
+  res.innerHTML=`<div style="padding:0">${Object.entries(e).map(([k,v])=>`<div class="cost-row"><div class="cr-item">${k.charAt(0).toUpperCase()+k.slice(1)}</div><div class="cr-rate">₹${(v*area).toLocaleString('en-IN')}</div></div>`).join('')}<div class="cost-row" style="background:var(--g50)"><div class="fw7" style="color:var(--g800);font-size:14px">Total Estimated (${area} ac)</div><div class="cr-rate fw7" style="font-size:15px">₹${total.toLocaleString('en-IN')}</div></div></div>`;
+}
+
+// ── PHOTOS ───────────────────────────────────
+PAGES.photos=function(){
+  return`<div class="ph"><div><h2>📸 ${t('photos')}</h2><p>${S.lang==='od'?'ଆ‌ ─ ‌ ─ ‌':'Farm photos — tagged, stored in profile, used for AI dataset'}</p></div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><h3>📤 ${S.lang==='od'?'ଚ‌ ─ ‌ ─ ‌':'Upload Photos'}</h3></div>
+      <div class="cb">
+        <div class="fg"><label>${t('selectCropCat')}</label>${catSel('photoCat','')}</div>
+        <div class="fg"><label>${S.lang==='od'?'ଚ‌ ─ ‌ ─ ‌ ─ ‌':'Photo Tag / Description'}</label><input class="fc" id="photoTag" placeholder="e.g. Stem borer damage, Harvest photo"></div>
+        <div class="upload-zone" onclick="document.getElementById('photoIn').click()">
+          <div style="font-size:36px;margin-bottom:8px">📷</div>
+          <h4 style="font-size:14px;font-weight:600;color:var(--g700)">${S.lang==='od'?'ଚ‌ ─ ‌ ─ ‌':'Click to upload farm photos'}</h4>
+          <p class="tsm tm mt1">JPG, PNG, WEBP — Multiple files OK</p>
+        </div>
+        <input type="file" id="photoIn" multiple accept="image/*" style="display:none" onchange="handlePhotos(event)">
+        <div id="photoPrev" class="mt1"></div>
+        <div class="alert ai mt2 tsm">🤖 ${S.lang==='od'?'ଚ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌':'Photos are tagged by crop, date, and category. They build an AI dataset for future pest/disease identification and crop advisory.'}</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>🖼️ ${S.lang==='od'?'ଆ‌ ─ ‌ ─ ‌':'My Farm Gallery'}</h3><span class="badge bg">${S.photos.length} photos</span></div>
+      <div class="cb">
+        ${S.photos.length?`<div class="photo-grid">${S.photos.map(p=>`<div class="pthumb"><img src="${p.url}" alt="${p.tag}"><div class="ptag">${p.tag}</div></div>`).join('')}</div>`:
+        `<div style="text-align:center;padding:32px;color:var(--gr400)"><div style="font-size:36px;margin-bottom:8px">📷</div><p>${S.lang==='od'?'ଏ‌ ─ ‌ ─ ‌ ─ ‌':'No photos yet. Upload to build your AI visual dataset.'}</p></div>`}
+      </div>
+    </div>
+  </div>`;
+};
+function handlePhotos(e){
+  const tag=document.getElementById('photoTag')?.value||'Farm photo';
+  const cat=document.getElementById('photoCat')?.value||'general';
+  Array.from(e.target.files).forEach(f=>{
+    const url=URL.createObjectURL(f);
+    S.photos.push({url,tag,cat,date:new Date().toDateString(),name:f.name});
+  });
+  const prev=document.getElementById('photoPrev');
+  if(prev)prev.innerHTML=`<div class="alert as">✅ ${e.target.files.length} photo(s) uploaded and tagged!</div><div style="display:flex;gap:8px;flex-wrap:wrap">${Array.from(e.target.files).map(f=>`<img src="${URL.createObjectURL(f)}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:2px solid var(--g200)">`).join('')}</div>`;
+  toast(`✅ ${e.target.files.length} photo(s) uploaded!`);
+}
+
+// ── AI ASSISTANT ─────────────────────────────
+PAGES.aiAssistant=function(){
+  const sugg=[
+    {en:'Best time to apply Urea in Kharif paddy?',od:'ଖ‌ ─ ‌ ─ ‌ ─ Urea ─ ‌ ─ ‌ ─ ‌?'},
+    {en:'Organic treatment for tomato fruit borer?',od:'ଟ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌?'},
+    {en:'Water requirement for groundnut in Odisha?',od:'ଗ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌?'},
+    {en:'How to improve soil pH for acidic soil?',od:'ଏ‌ ─ ‌ ─ ‌ ─ ‌ ─ pH ─ ‌ ─ ‌?'},
+    {en:'Best maize variety for Odisha Kharif?',od:'ଓ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌?'},
+    {en:'Dose of Trichoderma for vegetable seedlings?',od:'ଟ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌?'},
+    {en:'Recommended spacing for banana in Odisha?',od:'ଓ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌?'},
+    {en:'Signs and treatment of blast disease in paddy?',od:'ଧ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌?'},
+  ];
+  return`<div class="ph"><div><h2>🤖 ${t('aiAssistant')}</h2><p>${S.lang==='od'?'ଚ‌ ─ ‌ ─ ‌ ─ ‌':'ChatGPT/Claude-powered — answers queries not in local database'}</p></div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><h3>💬 ${S.lang==='od'?'ପ‌ ─ ‌ ─ ‌':'Ask Anything'}</h3></div>
+      <div class="cb">
+        <div class="fg"><label>${S.lang==='od'?'ଆ‌ ─ ‌ ─ ‌':'Your Question'}</label>
+          <textarea class="fc" id="aiQ" rows="4" placeholder="${S.lang==='od'?'ଆ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌?':'e.g. What is the recommended dose of Urea for Kharif paddy in Odisha?'}"></textarea>
+        </div>
+        <div class="fg">
+          <label>${S.lang==='od'?'ଭ‌ ─ ‌':'Language'}</label>
+          <div class="radio-grp">
+            <label class="ro active" id="aiLangEn" onclick="this.parentNode.querySelectorAll('.ro').forEach(r=>r.classList.remove('active'));this.classList.add('active')"><input type="radio" name="aiLang" value="en" checked>English</label>
+            <label class="ro" id="aiLangOd" onclick="this.parentNode.querySelectorAll('.ro').forEach(r=>r.classList.remove('active'));this.classList.add('active')"><input type="radio" name="aiLang" value="od">ଓଡ଼ିଆ</label>
+          </div>
+        </div>
+        <button class="btn bp w100" onclick="doAI()" id="aiBtn">🔍 ${S.lang==='od'?'ଉ‌ ─ ‌ ─ ‌':'Get Answer'}</button>
+        <div id="aiRes" class="hidden"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>💡 ${S.lang==='od'?'ସ‌ ─ ‌ ─ ‌':'Suggested Questions'}</h3></div>
+      <div class="cb">
+        ${sugg.map(q=>`<button style="width:100%;text-align:left;padding:10px 12px;border:1px solid var(--gr100);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-family:var(--font);margin-bottom:8px;transition:background .15s;color:#333" onmouseover="this.style.background='var(--g50)'" onmouseout="this.style.background='#fff'" onclick="prefillAI('${(S.lang==='od'?q.od:q.en).replace(/'/g,&quot;\\'&quot;)}')">💬 ${S.lang==='od'?q.od:q.en}</button>`).join('')}
+      </div>
+    </div>
+  </div>`;
+};
+function prefillAI(q){const el=document.getElementById('aiQ');if(el){el.value=q;el.focus();}}
+function openAIFor(ctx){
+  nav('aiAssistant');
+  const prefills={nutrients:S.lang==='od'?'ଫ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌?':`Nutrient recommendation for my crop — please advise`,protection:S.lang==='od'?'ଉ‌ ─ ‌ ─ ‌ ─ ‌?':`Plant protection treatment for my crop`};
+  setTimeout(()=>{const el=document.getElementById('aiQ');if(el){el.value=prefills[ctx]||'';el.focus();}},200);
+}
+async function doAI(){
+  const q=document.getElementById('aiQ')?.value?.trim();
+  if(!q){toast('Enter a question','e');return;}
+  const lang=document.querySelector('input[name="aiLang"]:checked')?.value||'en';
+  const btn=document.getElementById('aiBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Asking AI...';}
+  const res=document.getElementById('aiRes');
+  res?.classList.remove('hidden');
+  if(res)res.innerHTML='<div class="ai-result">Connecting to AI assistant...</div>';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`You are KrishiSeva AI, an expert agricultural assistant for Odisha, India. Answer in ${lang==='od'?'Odia script (Odia language)':'clear English'}. Be practical, farmer-friendly, specific with doses and timings. Question: ${q}`}]})});
+    const d=await r.json();
+    const ans=d.content?.[0]?.text||'No response.';
+    if(res)res.innerHTML=`<div class="ai-result">${ans}</div>`;
+    speak((S.lang==='od'?'AI ─ ‌ ─ ‌: ':'AI says: ')+ans.substring(0,200));
+  }catch{
+    const demo=S.lang==='od'
+      ?`ଆ‌ ─ ‌ "${q}":\n\n• ─ ‌ ─ ‌ KVK ─ ‌ ─ ‌ ─ ‌ ─ ‌।\n• ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌ ─ ‌।\n• Kisan Call Centre: 1800-180-1551 (Toll Free)\n• PM-KISAN: pmkisan.gov.in\n\n⚠️ Live AI: API key required.`
+      :`Advisory for "${q}":\n\n• Contact your nearest Krishi Vigyan Kendra (KVK) for location-specific guidance.\n• Odisha Dept of Agriculture: agriodisha.nic.in\n• Kisan Call Centre: 1800-180-1551 (Toll Free, 24×7)\n• PM-KISAN portal: pmkisan.gov.in\n\n⚠️ For live AI responses, configure the Anthropic API key in the backend.`;
+    if(res)res.innerHTML=`<div class="ai-result">${demo}</div>`;
+  }
+  if(btn){btn.disabled=false;btn.textContent='🔍 '+(S.lang==='od'?'ଉ‌ ─ ‌':'Get Answer');}
+}
+
+// ── ADMIN PAGES ──────────────────────────────
+PAGES.adminDash=function(){
+  const recs=S.db.farmRecords;
+  const totalRev=recs.reduce((s,r)=>s+(Number(r.revenue)||0),0);
+  const totalHarv=recs.reduce((s,r)=>s+(Number(r.harvest)||0),0);
+  return`<div class="ph"><div><h2>${t('adminDash')}</h2><p>KrishiSeva Platform Overview — Odisha</p></div></div>
+  <div class="g4 mb2">
+    ${[{l:'Total Farmers',v:S.db.users.length,s:'Registered'},{l:'Active Places',v:S.db.places.length,s:'Across Odisha'},{l:'Farm Records',v:S.db.farmRecords.length,s:'This season'},{l:'Total Revenue',v:'₹'+totalRev.toLocaleString('en-IN'),s:totalHarv+' qtl harvested'}].map(s=>`<div class="sc"><div class="sc-lbl">${s.l}</div><div class="sc-val">${s.v}</div><div class="sc-sub">${s.s}</div></div>`).join('')}
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><h3>📋 Recent Activity</h3></div><div class="cb">
+      ${['Ramesh Panda submitted farm data — Jun 3','Bijay Nayak submitted farm data — Jun 7','Sunita Behera registered — Cuttack','Paddy Kharif schedule updated','New form question added: Irrigation count'].map(a=>`<div style="padding:8px 0;border-bottom:1px solid #f5f5f0;font-size:12px">✅ ${a}</div>`).join('')}
+    </div></div>
+    <div class="card"><div class="ch"><h3>📊 Crop Distribution</h3></div><div class="cb">
+      ${[{c:'Paddy (Kharif)',p:42},{c:'Tomato',p:22},{c:'Groundnut',p:18},{c:'Maize',p:12},{c:'Others',p:6}].map(c=>`<div style="margin-bottom:10px"><div class="flex-between tsm mb1"><span>${c.c}</span><span class="fw7">${c.p}%</span></div><div class="pbar"><div class="pfill" style="width:${c.p}%"></div></div></div>`).join('')}
+    </div></div>
+  </div>`;
+};
+
+PAGES.adminData=function(){
+  return`<div class="ph"><div><h2>${t('adminData')}</h2><p>All submitted farm data records</p></div>
+  <div class="ph-acts no-print"><button class="btn bs bsm" onclick="exportCSV()">⬇️ CSV</button><button class="prtbtn" onclick="window.print()">🖨️</button></div></div>
+  <div class="card"><div class="sx"><table class="tbl">
+    <thead><tr><th>Farmer</th><th>Place</th><th>Crop</th><th>Date</th><th>pH</th><th>N</th><th>Harvest</th><th>Revenue</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>${S.db.farmRecords.map((r,i)=>`<tr>
+      <td class="fw7">${r.farmer||'─'}</td><td class="tm">${r.place||'─'}</td>
+      <td><span class="badge bg">${r.crop||'─'}</span></td>
+      <td class="txs">${r.date||'─'}</td>
+      <td>${r.soilPH||'─'}</td><td>${r.rN||'─'}</td>
+      <td class="fw7">${r.harvest||'─'} qtl</td>
+      <td class="tg fw7">₹${r.revenue?Number(r.revenue).toLocaleString('en-IN'):'─'}</td>
+      <td><span class="badge ${r.status==='verified'?'bt':'ba'}">${r.status||'─'}</span></td>
+      <td><button class="btn bs bsm" onclick="verifyRec(${i})">✓ Verify</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`;
+};
+function verifyRec(i){S.db.farmRecords[i].status='verified';toast('Record verified!');nav('adminData');}
+
+PAGES.adminUsers=function(){
+  return`<div class="ph"><div><h2>${t('adminUsers')}</h2></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add user — production build')">➕ Add</button></div></div>
+  <div class="card"><div class="sx"><table class="tbl">
+    <thead><tr><th>Name</th><th>Mobile</th><th>District</th><th>Places</th><th>Crops</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>${S.db.users.map(u=>`<tr><td class="fw7">${u.name}</td><td>${u.mobile}</td><td>${u.district}</td>
+      <td>${u.places?.join(', ')||'─'}</td><td class="tsm">${u.crops?.join(', ')||'─'}</td>
+      <td><span class="badge ${u.active?'bt':'br'}">${u.active?'Active':'Inactive'}</span></td>
+      <td><button class="btn bs bsm" onclick="toast('Edit — production build')">✏️</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`;
+};
+
+PAGES.adminPlaces=function(){
+  return`<div class="ph"><div><h2>${t('adminPlaces')}</h2></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add place — production build')">➕ Add Place</button></div></div>
+  ${S.db.places.map(p=>`<div class="asec">
+    <div class="asec-hdr">📍 ${plName(p)} — ${p.dist}<button class="btn bs bsm" onclick="toast('Edit')">✏️</button></div>
+    <div class="asec-body">
+      <div class="mb1">${p.plots.map(pl=>`<span class="chip">📐 ${pl.n}</span> `).join('')}</div>
+      <div class="flex gap1"><button class="btn bs bsm" onclick="toast('Add plot')">➕ Plot</button><button class="btn bs bsm" onclick="toast('Assign farmer')">👤 Assign</button><button class="btn bs bsm" onclick="toast('Map edit')">🗺️ Map</button></div>
+    </div>
+  </div>`).join('')}`;
+};
+
+PAGES.adminCrops=function(){
+  return`<div class="ph"><div><h2>${t('adminCrops')}</h2></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add crop — production build')">➕ Add</button></div></div>
+  ${CAT_KEYS.map(cat=>`<div class="card mb2">
+    <div class="ch"><h3>${CAT_ICONS[cat]} ${t(cat)}</h3><span class="badge bg">${S.db.crops[cat]?.length||0} crops</span></div>
+    <div class="sx"><table class="tbl">
+      <thead><tr><th>Crop</th><th>Season</th><th>Duration</th><th>Seed Rate</th><th>Spacing</th><th>Action</th></tr></thead>
+      <tbody>${(S.db.crops[cat]||[]).map(c=>`<tr><td class="fw7">${c.name}</td><td>${c.season}</td><td>${c.dur}</td><td>${c.seed}</td><td>${c.space}</td><td><button class="btn bs bsm" onclick="toast('Edit')">✏️</button></td></tr>`).join('')}</tbody>
+    </table></div>
+  </div>`).join('')}`;
+};
+
+PAGES.adminNutrients=function(){
+  return`<div class="ph"><div><h2>${t('adminNutrients')}</h2></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add — production build')">➕ Add</button></div></div>
+  ${CAT_KEYS.map(cat=>`<div class="asec">
+    <div class="asec-hdr">${CAT_ICONS[cat]} ${t(cat)}</div>
+    <div class="asec-body">
+      <p class="tsm tm mb1">⚗️ Chemical:</p>${doseBox(S.db.nutrients.chemical[cat]||[])}
+      <p class="tsm tm mb1 mt1">🌿 Organic:</p>${doseBox(S.db.nutrients.organic[cat]||[])}
+      <button class="btn bs bsm mt1" onclick="toast('Edit nutrients')">✏️ Edit</button>
+    </div>
+  </div>`).join('')}`;
+};
+
+PAGES.adminProtection=function(){
+  return`<div class="ph"><div><h2>${t('adminProtection')}</h2></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add — production build')">➕ Add</button></div></div>
+  ${CAT_KEYS.map(cat=>`<div class="asec">
+    <div class="asec-hdr">${CAT_ICONS[cat]} ${t(cat)}</div>
+    <div class="asec-body">
+      <p class="tsm tm mb1">⚗️ Chemical:</p>${protTable(S.db.protection.chemical[cat]||[])}
+      <p class="tsm tm mb1 mt1">🌿 Organic:</p>${protTable(S.db.protection.organic[cat]||[])}
+      <button class="btn bs bsm mt1" onclick="toast('Edit')">✏️ Edit</button>
+    </div>
+  </div>`).join('')}`;
+};
+
+PAGES.adminSchedules=function(){
+  return`<div class="ph"><div><h2>${t('adminSchedules')}</h2></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add — production build')">➕ Add</button></div></div>
+  ${Object.entries(S.db.schedules).map(([cat,sch])=>`<div class="asec">
+    <div class="asec-hdr">📅 ${cat.charAt(0).toUpperCase()+cat.slice(1)} Schedule</div>
+    <div class="asec-body">
+      <div class="tl">${sch.map(s=>`<div class="tli"><div class="tl-wk">${s.w}</div><div class="tl-task">${S.lang==='od'?s.tkOd||s.tk:s.tk}</div><div class="tl-det">${s.d}</div></div>`).join('')}</div>
+      <button class="btn bs bsm mt1" onclick="toast('Edit schedule')">✏️ Edit</button>
+    </div>
+  </div>`).join('')}`;
+};
+
+PAGES.adminCosting=function(){
+  return`<div class="ph"><div><h2>${t('adminCosting')}</h2></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add — production build')">➕ Add</button></div></div>
+  ${Object.entries(S.db.costings).map(([cat,rows])=>`<div class="asec">
+    <div class="asec-hdr">💰 ${cat.replace(/_/g,' ')}</div>
+    <div style="padding:0">${rows.map(r=>`<div class="cost-row"><div><div class="cr-item">${iName(r)}</div><div class="cr-cat txs">${r.cat}</div></div><div style="text-align:right"><div class="cr-rate">₹${r.rate.toLocaleString('en-IN')}</div><div class="cr-unit txs tm">${r.unit}</div></div></div>`).join('')}</div>
+    <div style="padding:8px 16px"><button class="btn bs bsm" onclick="toast('Edit')">✏️ Edit</button></div>
+  </div>`).join('')}`;
+};
+
+PAGES.adminForms=function(){
+  return`<div class="ph"><div><h2>${t('adminForms')}</h2><p>Configure field data entry form questions shown to farmers</p></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add question — production build')">➕ Add Question</button></div></div>
+  <div class="card">
+    <div class="ch"><h3>📋 Form Questions (${S.db.formQuestions.length} active)</h3></div>
+    <div style="padding:0">
+      ${S.db.formQuestions.map((q,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #f5f5f0">
+        <span style="background:var(--g50);color:var(--g700);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</span>
+        <div style="flex:1">
+          <div class="tsm fw7">${q.lbl}</div>
+          <div class="txs tm">${q.lblOd} — Type: ${q.type}${q.unit?' | Unit: '+q.unit:''}</div>
+        </div>
+        <div class="flex gap1">
+          <button class="btn bs bsm" onclick="toast('Edit')">✏️</button>
+          <button class="btn br2 bsm" onclick="toast('Delete')">🗑️</button>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+};
+
+PAGES.adminOrders=function(){
+  return`<div class="ph"><div><h2>${t('adminOrders')}</h2></div>
+  <div class="ph-acts no-print"><button class="btn bp bsm" onclick="toast('Add product — production build')">➕ Add Product</button></div></div>
+  <div class="card"><div class="ch"><h3>🛒 Product Catalogue (${S.db.products.length} items)</h3></div>
+  <div class="sx"><table class="tbl">
+    <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Unit</th><th>Delivery</th><th>Action</th></tr></thead>
+    <tbody>${S.db.products.map(p=>`<tr>
+      <td class="fw7">${p.em} ${p.n}</td>
+      <td><span class="badge bg">${p.cat}</span></td>
+      <td class="tg fw7">₹${p.price}</td>
+      <td class="tm">${p.unit}</td>
+      <td class="txs">${p.del}</td>
+      <td><button class="btn bs bsm" onclick="toast('Edit product')">✏️</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`;
+};
+
+</script>
+</body>
+</html>
